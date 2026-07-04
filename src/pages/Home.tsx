@@ -17,7 +17,7 @@ export default function Home() {
           When I'm not coding or organizing tech communities, you can find me playing the piano.
         </p>
         <div className="flex gap-4 mt-4">
-          <a href="mailto:your.email@example.com" className="px-6 py-2 bg-[#292524] dark:bg-[#fafaf9] dark:text-[#1c1917] text-white rounded-lg hover:bg-[#c2410c] dark:hover:bg-[#c2410c] dark:hover:text-white transition-colors font-medium flex items-center gap-2">
+          <a href="mailto:luhouyang@gmail.com" className="px-6 py-2 bg-[#292524] dark:bg-[#fafaf9] dark:text-[#1c1917] text-white rounded-lg hover:bg-[#c2410c] dark:hover:bg-[#c2410c] dark:hover:text-white transition-colors font-medium flex items-center gap-2">
             <Mail size={18} /> Contact
           </a>
           <a href="https://github.com/luhouyang" target="_blank" rel="noreferrer" className="px-6 py-2 bg-[#f5f5f4] dark:bg-[#292524] text-[#292524] dark:text-[#d6d3d1] border border-[#e7e5e4] dark:border-[#44403c] rounded-lg hover:border-[#c2410c] hover:text-[#c2410c] transition-colors font-medium flex items-center gap-2">
