@@ -1,0 +1,96 @@
+# Modeling Complex Systems: From Topology to Emergence
+
+To understand how autonomous agents navigate chaotic environments, we must break down the architecture, the mathematical constraints, and the emergent behaviors that result. 
+
+> "The whole is not only greater than the sum of its parts; it is fundamentally different in nature." — *P.W. Anderson, More Is Different (1972)*
+
+## 1. System Architecture
+
+Before writing any training loops, we must define the observation topology. Here is the data flow for an agent processing spatial inputs through a convolutional policy network:
+
+<Mermaid chart={`
+  graph LR;
+    Environment-->|State Sₜ| SensorNode;
+    SensorNode-->|LiDAR Pointcloud| ConvolutionalFilter;
+    ConvolutionalFilter-->|Feature Map| PolicyNetwork;
+    PolicyNetwork-->|Action Aₜ| Environment;
+`} />
+
+Notice how the environment feeds back into the sensor node, creating a closed-loop Markov Decision Process (MDP).
+
+## 2. The Optimization Landscape
+
+In Proximal Policy Optimization (PPO), we constrain the agent's policy updates to prevent catastrophic forgetting. The surrogate objective function is defined as:
+
+$$
+L^{CLIP}(\theta) = \hat{\mathbb{E}}_t \left[ \min\left(r_t(\theta)\hat{A}_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t\right) \right]
+$$
+
+Where the probability ratio is $r_t(\theta) = \frac{\pi_\theta(a_t | s_t)}{\pi_{\theta_{old}}(a_t | s_t)}$. By adjusting the clipping parameter ($\epsilon$) and learning rate, we restrict the agent from taking destructive steps across the loss landscape.
+
+<MathSurfacePlotter initialEpsilon={0.2} initialLearningRate={0.001} />
+
+## 3. Positional Encoding in Transformers
+
+When processing sequential spatial data, standard attention mechanisms are permutation invariant. We inject positional awareness using **Rotary Position Embeddings (RoPE)**. Unlike absolute encodings, RoPE rotates the token vectors in the complex plane. 
+
+The rotation angle $\theta_i$ decays for higher dimensions, allowing the model to attend to relative distances differently across its embedding space:
+
+$$
+\theta_i = 10000^{-2i/d}
+$$
+
+Drag the slider below to observe how lower-dimensional pairs rotate rapidly, while higher-dimensional pairs remain relatively stable as the token position $m$ advances.
+
+<RoPEVisualizer dimCount={5} />
+
+## 4. Navigating Chaotic Environments
+
+Agents do not operate in static worlds. If the environment's state transitions follow a chaotic strange attractor (like the Lorenz system), tiny changes in initial conditions drastically alter the state space. The system is governed by:
+
+$$
+\frac{dx}{dt} = \sigma(y - x), \quad \frac{dy}{dt} = x(\rho - z) - y, \quad \frac{dz}{dt} = xy - \beta z
+$$
+
+<ChaosCanvas initialRho={28} initialSigma={10} initialBeta={2.667} />
+
+## 5. Generative World Models
+
+To predict future states, the agent employs a generative world model based on stochastic differential equations (SDEs). The forward diffusion process systematically destroys data by injecting Gaussian noise over $T$ timesteps:
+
+$$
+q(x_t | x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t} x_0, (1 - \bar{\alpha}_t)I)
+$$
+
+<DiffusionCanvas initialTimestep={0.0} />
+
+## 6. Emergent Swarm Intelligence
+
+When multiple agents deploy this policy simultaneously, we observe *emergence*. No single agent possesses the "flocking" algorithm; it arises purely from local interactions balancing three rules:
+1. **Separation:** Steer to avoid crowding local flockmates.
+2. **Alignment:** Steer towards the average heading of local flockmates.
+3. **Cohesion:** Steer to move toward the average position of local flockmates.
+
+Here is the core logic for the alignment vector in a Python simulation:
+
+```python
+def calculate_alignment(agent, neighbors, weight=1.0):
+    if not neighbors:
+        return np.zeros(2)
+    
+    # Average the velocity vectors of all neighbors
+    avg_velocity = np.mean([n.velocity for n in neighbors], axis=0)
+    
+    # Return the steering force
+    return (avg_velocity - agent.velocity) * weight
+```
+
+Tweak the parameters below to watch the swarm shift from organized flocking to chaotic scattering in real-time.
+
+<SwarmCanvas />
+
+## Conclusion
+
+Building resilient AI systems requires moving beyond isolated neural networks and embracing the topology of the environments they inhabit. Whether through the mathematical rigor of PPO clipping or the emergent beauty of swarm mechanics, the future of systems engineering lies at the intersection of control theory and complex dynamics.
+
+For further reading, see the [OpenAI Spinning Up Guide](https://spinningup.openai.com/) and our internal documentation on `local-slm` orchestration.

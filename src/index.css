@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #fdfbf7; /* Warm Ivory */
+    color: #44403c; /* Warm Stone-700 */
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+    
+    background-image:
+      /* Soft, warm sepia undulations */
+      radial-gradient(ellipse at 20% 30%, rgba(120, 53, 15, 0.03) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 15%, rgba(255, 251, 235, 0.8) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, rgba(120, 53, 15, 0.02) 0%, transparent 70%),
+      radial-gradient(ellipse at 10% 90%, rgba(253, 245, 220, 0.6) 0%, transparent 60%),
+      /* Microscopic cotton fibers */
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      
+    background-blend-mode: normal, normal, normal, normal, multiply;
+    background-attachment: fixed;
+  }
+
+  html.dark body {
+    background-color: #1c1917; /* Dark Espresso (Stone-900) */
+    color: #d6d3d1; /* Stone-300 */
+    
+    background-image:
+      radial-gradient(ellipse at 20% 30%, rgba(253, 186, 116, 0.03) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 15%, rgba(253, 186, 116, 0.02) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, rgba(0, 0, 0, 0.3) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      
+    background-blend-mode: normal, normal, normal, screen;
+    background-attachment: fixed;
+  }
+
+  /* Dynamic Parallax Creases (Warm Sepia Tones) */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: -40px; 
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(ellipse at 30% 20%, rgba(120, 53, 15, 0.02) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(255, 251, 235, 0.05) 0%, transparent 50%);
+    transform: translate(var(--mx, 0px), var(--my, 0px));
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: breathe 8s ease-in-out infinite alternate;
+  }
+
+  html.dark body::after {
+    background-image:
+      radial-gradient(ellipse at 30% 20%, rgba(0, 0, 0, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(253, 186, 116, 0.02) 0%, transparent 50%);
+  }
+
+  @keyframes breathe {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #292524; /* Stone-800 */
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  html.dark h1, html.dark h2, html.dark h3, html.dark h4, html.dark h5, html.dark h6 {
+    color: #fafaf9; /* Stone-50 */
+  }
+}
+
+@layer components {
+  /* The new clean, elegant Archival Card */
+  .archival-card {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4; /* Stone-200 */
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 1px 3px 0 rgba(120, 53, 15, 0.05), 0 1px 2px -1px rgba(120, 53, 15, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .archival-card:hover {
+    border-color: #d6d3d1; /* Stone-300 */
+    box-shadow: 0 10px 15px -3px rgba(120, 53, 15, 0.08), 0 4px 6px -4px rgba(120, 53, 15, 0.05);
+    transform: translateY(-2px);
+  }
+
+  html.dark .archival-card {
+    background-color: #292524; /* Stone-800 */
+    border-color: #44403c; /* Stone-700 */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  html.dark .archival-card:hover {
+    border-color: #57534e; /* Stone-600 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ==========================================
+   PLOTLY.JS MODEBAR (FLUSH & TRANSPARENT)
+   ========================================== */
+.js-plotly-plot .plotly .modebar,
+.plotly .modebar {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  top: 10px !important;
+  right: 10px !important;
+  display: flex !important;
+  gap: 8px !important;
+  padding: 0 !important;
+}
+
+/* Remove ALL backgrounds from groups and buttons (Fixes the black hover issue) */
+.plotly .modebar-group,
+.plotly .modebar-btn,
+.plotly .modebar-btn:hover,
+.plotly .modebar-btn.active,
+.plotly .modebar-btn:focus {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Target the SVG elements inside the buttons */
+.plotly .modebar svg,
+.plotly .modebar svg path,
+.plotly .modebar svg line,
+.plotly .modebar svg rect,
+.plotly .modebar svg circle {
+  fill: #78716c !important; /* Stone-500 */
+  stroke: #78716c !important;
+  transition: all 0.2s ease !important;
+}
+
+html.dark .plotly .modebar svg,
+html.dark .plotly .modebar svg path,
+html.dark .plotly .modebar svg line,
+html.dark .plotly .modebar svg rect,
+html.dark .plotly .modebar svg circle {
+  fill: #a8a29e !important; /* Stone-400 */
+  stroke: #a8a29e !important;
+}
+
+/* Hover and Active States (Strictly color change, NO backgrounds) */
+.plotly .modebar-btn:hover svg path,
+.plotly .modebar-btn.active svg path,
+.plotly .modebar-btn:hover svg line,
+.plotly .modebar-btn:hover svg rect,
+.plotly .modebar-btn:hover svg circle {
+  fill: #c2410c !important; /* Terracotta */
+  stroke: #c2410c !important;
+}
+
+/* Force any hidden SVG background rects to stay transparent */
+.plotly .modebar-btn rect {
+  fill: transparent !important;
+  stroke: transparent !important;
+}

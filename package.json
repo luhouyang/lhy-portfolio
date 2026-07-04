@@ -1,0 +1,48 @@
+{
+  "name": "lhy-portfolio",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mdx-js/react": "^3.0.1",
+    "@mdx-js/rollup": "^3.0.1",
+    "@react-three/drei": "^9.105.4",
+    "@react-three/fiber": "^8.16.2",
+    "katex": "^0.16.47",
+    "lucide-react": "^0.378.0",
+    "mermaid": "^10.9.0",
+    "plotly.js": "^2.32.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-katex": "^3.0.1",
+    "react-plotly.js": "^2.6.0",
+    "react-router-dom": "^6.23.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "three": "^0.164.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.13",
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/react-katex": "^3.0.4",
+    "@types/react-plotly.js": "^2.6.4",
+    "@types/three": "^0.164.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}
