@@ -1,20 +1,24 @@
 # Modeling Complex Systems: From Topology to Emergence
 
-To understand how autonomous agents navigate chaotic environments, we must break down the architecture, the mathematical constraints, and the emergent behaviors that result. 
+<Sticker src="/assets/stickers/robot.png" size={120} initialRotation={-15} />
 
-> "The whole is not only greater than the sum of its parts; it is fundamentally different in nature." — *P.W. Anderson, More Is Different (1972)*
+To understand how autonomous agents navigate chaotic environments, we must break down the architecture, the mathematical constraints, and the emergent behaviors that result.
+
+> "The whole is not only greater than the sum of its parts; it is fundamentally different in nature." — _P.W. Anderson, More Is Different (1972)_
 
 ## 1. System Architecture
 
 Before writing any training loops, we must define the observation topology. Here is the data flow for an agent processing spatial inputs through a convolutional policy network:
 
-<Mermaid chart={`
+<Mermaid
+  chart={`
   graph LR;
     Environment-->|State Sₜ| SensorNode;
     SensorNode-->|LiDAR Pointcloud| ConvolutionalFilter;
     ConvolutionalFilter-->|Feature Map| PolicyNetwork;
     PolicyNetwork-->|Action Aₜ| Environment;
-`} />
+`}
+/>
 
 Notice how the environment feeds back into the sensor node, creating a closed-loop Markov Decision Process (MDP).
 
@@ -28,11 +32,14 @@ $$
 
 Where the probability ratio is $r_t(\theta) = \frac{\pi_\theta(a_t | s_t)}{\pi_{\theta_{old}}(a_t | s_t)}$. By adjusting the clipping parameter ($\epsilon$) and learning rate, we restrict the agent from taking destructive steps across the loss landscape.
 
-<MathSurfacePlotter initialEpsilon={0.2} initialLearningRate={0.001} />
+<MathSurfacePlotter
+  initialEpsilon={0.2}
+  initialLearningRate={0.001}
+/>
 
 ## 3. Positional Encoding in Transformers
 
-When processing sequential spatial data, standard attention mechanisms are permutation invariant. We inject positional awareness using **Rotary Position Embeddings (RoPE)**. Unlike absolute encodings, RoPE rotates the token vectors in the complex plane. 
+When processing sequential spatial data, standard attention mechanisms are permutation invariant. We inject positional awareness using **Rotary Position Embeddings (RoPE)**. Unlike absolute encodings, RoPE rotates the token vectors in the complex plane.
 
 The rotation angle $\theta_i$ decays for higher dimensions, allowing the model to attend to relative distances differently across its embedding space:
 
@@ -52,7 +59,11 @@ $$
 \frac{dx}{dt} = \sigma(y - x), \quad \frac{dy}{dt} = x(\rho - z) - y, \quad \frac{dz}{dt} = xy - \beta z
 $$
 
-<ChaosCanvas initialRho={28} initialSigma={10} initialBeta={2.667} />
+<ChaosCanvas
+  initialRho={28}
+  initialSigma={10}
+  initialBeta={2.667}
+/>
 
 ## 5. Generative World Models
 
@@ -66,7 +77,8 @@ $$
 
 ## 6. Emergent Swarm Intelligence
 
-When multiple agents deploy this policy simultaneously, we observe *emergence*. No single agent possesses the "flocking" algorithm; it arises purely from local interactions balancing three rules:
+When multiple agents deploy this policy simultaneously, we observe _emergence_. No single agent possesses the "flocking" algorithm; it arises purely from local interactions balancing three rules:
+
 1. **Separation:** Steer to avoid crowding local flockmates.
 2. **Alignment:** Steer towards the average heading of local flockmates.
 3. **Cohesion:** Steer to move toward the average position of local flockmates.
@@ -77,10 +89,10 @@ Here is the core logic for the alignment vector in a Python simulation:
 def calculate_alignment(agent, neighbors, weight=1.0):
     if not neighbors:
         return np.zeros(2)
-    
+
     # Average the velocity vectors of all neighbors
     avg_velocity = np.mean([n.velocity for n in neighbors], axis=0)
-    
+
     # Return the steering force
     return (avg_velocity - agent.velocity) * weight
 ```

@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Line } from "@react-three/drei";
 import * as THREE from "three";
 import { InlineMath } from "react-katex";
+
 // ==========================================
 // 1. MERMAID DIAGRAMS
 // ==========================================
@@ -45,6 +46,21 @@ export const Mermaid = ({ chart }: { chart: string }) => {
     />
   );
 };
+
+// High-DPI canvas setup helper
+function setupHiDpiCanvas(
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number
+) {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
 
 // ==========================================
 // 2. 3D MATH SURFACE (Plotly.js)
@@ -178,14 +194,9 @@ const vertexShader = `
   attribute vec3 targetShape;
   
   void main() {
-    // Smooth easing for the transition
     float t = smoothstep(0.0, 1.0, uTime);
-    
-    // Interpolate between the starting sphere and the target torus
     vec3 currentPos = mix(position, targetShape, t);
     
-    // Add organic turbulence during the transition so it swirls instead of sliding rigidly
-    // Turbulence peaks at uTime = 0.5 (the middle of the transition)
     float turbulence = sin(uTime * 3.14159) * 2.5; 
     currentPos += vec3(
       sin(position.x * 1.5 + uTime * 4.0),
@@ -194,28 +205,34 @@ const vertexShader = `
     ) * turbulence;
 
     vec4 mvPosition = modelViewMatrix * vec4(currentPos, 1.0);
-    gl_PointSize = 3.0 * (100.0 / -mvPosition.z);
+    gl_PointSize = 1.5 * (100.0 / -mvPosition.z); 
     gl_Position = projectionMatrix * mvPosition;
   }
 `;
 
 const fragmentShader = `
   void main() {
-    if (length(gl_PointCoord - vec2(0.5)) > 0.5) discard;
-    gl_FragColor = vec4(0.76, 0.25, 0.05, 0.8); // Terracotta #c2410c
+    float dist = length(gl_PointCoord - vec2(0.5));
+    if (dist > 0.5) discard;
+    
+    // Smooth circular falloff for soft edges
+    float alpha = 1.0 - smoothstep(0.2, 0.5, dist);
+    
+    // Deep, rich terracotta color
+    gl_FragColor = vec4(0.65, 0.22, 0.05, alpha * 0.85); 
   }
 `;
 
 function DiffusionParticles({ timestep }: any) {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
-  const count = 20000; 
+  const PARTICLE_COUNT = 1000000; // 1 MILLION PARTICLES
 
   const { positions, targets } = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const tar = new Float32Array(count * 3);
+    const pos = new Float32Array(PARTICLE_COUNT * 3);
+    const tar = new Float32Array(PARTICLE_COUNT * 3);
     
-    for (let i = 0; i < count; i++) {
-      // INITIAL STATE: A perfect 3D sphere (Radius 8)
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      // INITIAL STATE: Sphere
       const theta1 = Math.random() * Math.PI * 2;
       const phi1 = Math.acos(2 * Math.random() - 1);
       const r1 = 8;
@@ -223,12 +240,11 @@ function DiffusionParticles({ timestep }: any) {
       pos[i * 3 + 1] = r1 * Math.sin(phi1) * Math.sin(theta1);
       pos[i * 3 + 2] = r1 * Math.cos(phi1);
 
-      // TARGET STATE: A 3D Torus (Donut)
+      // TARGET STATE: Torus
       const theta2 = Math.random() * Math.PI * 2;
       const phi2 = Math.random() * Math.PI * 2;
-      const R = 12; // Major radius (center of tube to center of torus)
-      const r = 4;  // Minor radius (radius of the tube)
-      
+      const R = 12; 
+      const r = 4;  
       tar[i * 3]     = (R + r * Math.cos(theta2)) * Math.cos(phi2);
       tar[i * 3 + 1] = (R + r * Math.cos(theta2)) * Math.sin(phi2);
       tar[i * 3 + 2] = r * Math.sin(theta2);
@@ -251,12 +267,17 @@ function DiffusionParticles({ timestep }: any) {
 
       <points>
         <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} args={[positions, 3]} />
-          <bufferAttribute attach="attributes-targetShape" count={count} array={targets} itemSize={3} args={[targets, 3]} />
+          <bufferAttribute attach="attributes-position" count={1000000} array={positions} itemSize={3} args={[positions, 3]} />
+          <bufferAttribute attach="attributes-targetShape" count={1000000} array={targets} itemSize={3} args={[targets, 3]} />
         </bufferGeometry>
         <shaderMaterial 
-          ref={materialRef} vertexShader={vertexShader} fragmentShader={fragmentShader}
-          uniforms={uniforms} transparent={true} depthWrite={false}
+          ref={materialRef} 
+          vertexShader={vertexShader} 
+          fragmentShader={fragmentShader}
+          uniforms={uniforms} 
+          transparent={true} 
+          depthWrite={false}
+          blending={THREE.NormalBlending} 
         />
       </points>
     </>
@@ -268,27 +289,19 @@ export const DiffusionCanvas = ({ initialTimestep = 0 }: any) => {
 
   return (
     <div className="my-10 p-4 bg-[#fdfbf7]/80 dark:bg-[#1c1917]/80 border border-[#e7e5e4] dark:border-[#44403c] rounded-lg">
-      <div className="w-full h-[400px] bg-[#f5f5f4] dark:bg-[#0c0a09] rounded border border-[#e7e5e4] dark:border-[#44403c]">
+      <div className="w-full h-[400px] bg-[#0c0a09] rounded border border-[#e7e5e4] dark:border-[#44403c] overflow-hidden">
         <Canvas camera={{ position: [0, 0, 40], fov: 60 }}>
           <DiffusionParticles timestep={timestep} />
-          <OrbitControls enablePan={false} />
+          <OrbitControls enablePan={false} autoRotate autoRotateSpeed={0.5} />
         </Canvas>
       </div>
       <label className="block font-mono text-sm text-[#57534e] dark:text-[#a8a29e] mt-4">
         <span className="flex items-center gap-2">
-          Diffusion Timestep (<InlineMath math="t" />
-          ):
+          Diffusion Timestep (<InlineMath math="t" />): 
           <span className="text-[#c2410c] font-bold">{timestep.toFixed(2)}</span>
+          <span className="ml-auto text-xs text-[#78716c]">Rendering 1,000,000 Particles via WebGL</span>
         </span>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={timestep}
-          onChange={(e) => setTimestep(parseFloat(e.target.value))}
-          className="w-full mt-2 accent-[#c2410c]"
-        />
+        <input type="range" min="0" max="1" step="0.01" value={timestep} onChange={(e) => setTimestep(parseFloat(e.target.value))} className="w-full mt-2 accent-[#c2410c]" />
       </label>
     </div>
   );
