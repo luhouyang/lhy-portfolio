@@ -47,20 +47,20 @@ export const Mermaid = ({ chart }: { chart: string }) => {
   );
 };
 
-// High-DPI canvas setup helper
-function setupHiDpiCanvas(
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number
-) {
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+// // High-DPI canvas setup helper
+// function setupHiDpiCanvas(
+//   canvas: HTMLCanvasElement,
+//   ctx: CanvasRenderingContext2D,
+//   width: number,
+//   height: number
+// ) {
+//   const dpr = window.devicePixelRatio || 1;
+//   canvas.width = width * dpr;
+//   canvas.height = height * dpr;
+//   canvas.style.width = `${width}px`;
+//   canvas.style.height = `${height}px`;
+//   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+// }
 
 // ==========================================
 // 2. 3D MATH SURFACE (Plotly.js)
