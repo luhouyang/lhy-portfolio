@@ -1,0 +1,286 @@
+# Quantum Computing Basics: Superposition, Entanglement, and Qubits
+
+<Sticker src="/assets/stickers/robot.png" size={120} initialRotation={15} />
+
+Classical computing is built on bits: deterministic switches that are either `0` or `1`. Every program, from a simple calculator to a large web application, eventually reduces to operations on these binary states.
+
+Quantum computing starts from a different foundation. Instead of bits, it uses **qubits**, which obey the rules of quantum mechanics. These rules allow qubits to exist in combinations of states, interfere with one another, and become correlated in ways that classical bits cannot.
+
+> "Nature isn't classical, dammit, and if you want to make a simulation of nature, you'd better make it quantum mechanical." — _Richard Feynman_
+
+Quantum computers are not simply "faster computers" for every task. They are a different model of computation, especially powerful for problems involving probability amplitudes, interference, molecular systems, optimization landscapes, and certain mathematical structures.
+
+---
+
+## 1. Classical Bits vs Quantum Qubits
+
+A classical bit can be understood as a coin lying flat on a table: it is either heads or tails.
+
+A qubit is more like a coin spinning in the air. While it is spinning, it is not simply heads or tails. It has a quantum state that contains information about the possible outcomes and their probabilities.
+
+When we finally measure the qubit, the spinning stops. The qubit collapses into one of the classical outcomes: `0` or `1`.
+
+The important difference is that before measurement, a qubit can be in a **superposition** of both possibilities.
+
+---
+
+## 2. The Qubit State and Superposition
+
+Mathematically, the state of a qubit is written as:
+
+$$
+|\psi\rangle = \alpha |0\rangle + \beta |1\rangle
+$$
+
+Here:
+
+- $|0\rangle$ is the quantum state corresponding to the classical bit `0`.
+- $|1\rangle$ is the quantum state corresponding to the classical bit `1`.
+- $\alpha$ and $\beta$ are called **probability amplitudes**.
+
+The probability of measuring `0` is:
+
+$$
+|\alpha|^2
+$$
+
+The probability of measuring `1` is:
+
+$$
+|\beta|^2
+$$
+
+Because the qubit must produce some outcome when measured, the probabilities must add to one:
+
+$$
+|\alpha|^2 + |\beta|^2 = 1
+$$
+
+This is called the **normalization condition**.
+
+A common misconception is that superposition means the qubit is "both 0 and 1 at the same time" in a simple classical sense. A better interpretation is that the qubit is in a quantum state that can produce either outcome with certain probabilities, and these probabilities are governed by amplitudes that can interfere.
+
+---
+
+## 3. Try It: Single-Qubit Gate Simulator
+
+The simulator below lets you apply quantum gates to a single qubit and observe how the probability amplitudes change.
+
+Try the following experiments:
+
+1. Click **Reset** to return the qubit to $|0\rangle$.
+2. Apply the **Hadamard** gate. The qubit should enter an equal superposition.
+3. Apply **Hadamard** again. The qubit returns to $|0\rangle$ because the amplitudes interfere constructively and destructively.
+4. Apply **Pauli-X** to flip the state from $|0\rangle$ to $|1\rangle$.
+5. Apply **Hadamard**, then **Pauli-Z**, then **Hadamard** again. Notice how changing the phase can affect the final measurement outcome.
+
+<QuantumGateSimulator />
+
+This simulator shows one of the most important ideas in quantum computing: quantum gates do not just change probabilities directly. They change **amplitudes**, and those amplitudes can later combine through interference.
+
+---
+
+## 4. Quantum Gates as Matrix Operations
+
+Quantum gates are represented by matrices. Applying a gate to a qubit is equivalent to multiplying the qubit's state vector by that matrix.
+
+Three fundamental gates are:
+
+$$
+H = \frac{1}{\sqrt{2}}
+\begin{bmatrix}
+1 & 1 \\
+1 & -1
+\end{bmatrix}
+$$
+
+$$
+X =
+\begin{bmatrix}
+0 & 1 \\
+1 & 0
+\end{bmatrix}
+$$
+
+$$
+Z =
+\begin{bmatrix}
+1 & 0 \\
+0 & -1
+\end{bmatrix}
+$$
+
+### Hadamard Gate
+
+The Hadamard gate creates superposition.
+
+If the qubit starts in $|0\rangle$, then:
+
+$$
+H|0\rangle = \frac{1}{\sqrt{2}}|0\rangle + \frac{1}{\sqrt{2}}|1\rangle
+$$
+
+This means measuring the qubit gives `0` with 50% probability and `1` with 50% probability.
+
+### Pauli-X Gate
+
+The Pauli-X gate is the quantum equivalent of a classical NOT gate.
+
+It swaps the amplitudes of $|0\rangle$ and $|1\rangle$:
+
+$$
+X|0\rangle = |1\rangle
+$$
+
+$$
+X|1\rangle = |0\rangle
+$$
+
+### Pauli-Z Gate
+
+The Pauli-Z gate flips the sign of the $|1\rangle$ amplitude:
+
+$$
+Z|1\rangle = -|1\rangle
+$$
+
+This does not immediately change the measurement probabilities by itself, but it changes the phase. Phase becomes very important when the qubit later passes through other gates, because phases can interfere.
+
+---
+
+## 5. Quantum Entanglement
+
+Entanglement is one of the most famous features of quantum mechanics.
+
+Two qubits are entangled when their joint state cannot be described as two independent single-qubit states.
+
+For example, the following state is entangled:
+
+$$
+|\Phi^+\rangle = \frac{1}{\sqrt{2}}(|00\rangle + |11\rangle)
+$$
+
+This is called a **Bell state**.
+
+If we measure the first qubit, there is a 50% chance of getting `0` and a 50% chance of getting `1`.
+
+However, once the first qubit is measured, the second qubit's outcome is immediately determined:
+
+- If the first qubit is measured as `0`, the second qubit will also be `0`.
+- If the first qubit is measured as `1`, the second qubit will also be `1`.
+
+This correlation is stronger than any classical correlation that could be explained by hidden pre-agreed instructions.
+
+However, entanglement does **not** allow faster-than-light communication. The measurement outcome on the first qubit is still random. The special property is that the two outcomes are correlated in a way that cannot be reproduced classically.
+
+---
+
+## 6. A Simple Entangling Circuit
+
+A common way to create entanglement is to combine a Hadamard gate with a CNOT gate.
+
+The circuit below shows the basic idea:
+
+1. Start with two qubits in the state $|00\rangle$.
+2. Apply a Hadamard gate to the first qubit.
+3. Use the first qubit as the control for a CNOT gate.
+4. The two qubits become entangled.
+
+<Mermaid
+  chart={`
+  graph LR;
+    Q0["Q0: |0>"]-->H["Hadamard H"];
+    H-->|Superposition| CNOT["CNOT"];
+    Q1["Q1: |0>"]-->CNOT;
+    CNOT-->|Entangled State| Measurement((M));
+`}
+/>
+
+Step by step, the state evolves like this:
+
+Initial state:
+
+$$
+|00\rangle
+$$
+
+After applying Hadamard to the first qubit:
+
+$$
+\frac{1}{\sqrt{2}}(|0\rangle + |1\rangle)|0\rangle
+$$
+
+Which can be written as:
+
+$$
+\frac{1}{\sqrt{2}}(|00\rangle + |10\rangle)
+$$
+
+After applying CNOT, where the first qubit controls the second:
+
+$$
+\frac{1}{\sqrt{2}}(|00\rangle + |11\rangle)
+$$
+
+This is the Bell state shown earlier.
+
+---
+
+## 7. Where Quantum Speedups Come From
+
+Quantum algorithms gain power from several effects working together:
+
+### Superposition
+
+A system of $n$ qubits can represent a state involving $2^n$ possible basis states.
+
+For example, three qubits can involve the basis states:
+
+$$
+|000\rangle, |001\rangle, |010\rangle, |011\rangle, |100\rangle, |101\rangle, |110\rangle, |111\rangle
+$$
+
+However, this does not mean a quantum computer can simply check all answers at once. Measurement only gives one outcome.
+
+### Interference
+
+The real power comes from interference. Quantum algorithms manipulate amplitudes so that wrong answers cancel out and correct answers become more likely.
+
+This is the key idea behind algorithms such as Grover's search and Shor's factoring algorithm.
+
+### Entanglement
+
+Entanglement allows multiple qubits to share a joint state with correlations that cannot be represented efficiently by classical bits.
+
+Many quantum algorithms rely on entanglement to coordinate information across the system.
+
+---
+
+## 8. Practical Limitations
+
+Quantum computing is powerful, but it is also fragile.
+
+Real quantum hardware faces challenges such as:
+
+- **Decoherence**, where qubits lose their quantum behavior due to interaction with the environment.
+- **Gate errors**, where physical operations are imperfect.
+- **Measurement noise**, where reading a qubit can produce errors.
+- **Error correction overhead**, where many physical qubits may be needed to create one reliable logical qubit.
+
+Because of this, today's quantum computers are still developing. They are most promising for specialized tasks such as quantum simulation, cryptography-related mathematics, optimization research, and certain linear algebra problems.
+
+---
+
+## Summary
+
+A qubit is not simply a classical bit with an extra state. It is a quantum object described by probability amplitudes.
+
+The core ideas are:
+
+- **Superposition** allows qubits to exist in combinations of $|0\rangle$ and $|1\rangle$.
+- **Measurement** converts a quantum state into a classical outcome probabilistically.
+- **Quantum gates** manipulate amplitudes using matrix operations.
+- **Entanglement** creates correlations between qubits that cannot be explained classically.
+- **Interference** allows quantum algorithms to amplify correct answers and suppress incorrect ones.
+
+Quantum computing is not a replacement for classical computing. It is a different computational model that becomes powerful when a problem can be expressed through amplitudes, interference, and entanglement.

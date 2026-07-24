@@ -19,6 +19,12 @@ const ChaosCanvas = lazy(() => import("../components/Interactive/Visualizers").t
 const DiffusionCanvas = lazy(() =>
   import("../components/Interactive/Visualizers").then((mod) => ({ default: mod.DiffusionCanvas })),
 );
+const CNNKernelVisualizer = lazy(() =>
+  import("../components/Interactive/Visualizers").then((mod) => ({ default: mod.CNNKernelVisualizer })),
+);
+const QuantumGateSimulator = lazy(() =>
+  import("../components/Interactive/Visualizers").then((mod) => ({ default: mod.QuantumGateSimulator })),
+);
 
 const Skeleton = () => (
   <div className="h-64 bg-[#f5f5f4] dark:bg-[#292524] animate-pulse rounded-lg my-8 border border-[#e7e5e4] dark:border-[#44403c]" />
@@ -103,6 +109,16 @@ export default function TutorialLayout() {
     DiffusionCanvas: (props: any) => (
       <Suspense fallback={<Skeleton />}>
         <DiffusionCanvas {...props} />
+      </Suspense>
+    ),
+    CNNKernelVisualizer: (props: any) => (
+      <Suspense fallback={<Skeleton />}>
+        <CNNKernelVisualizer {...props} />
+      </Suspense>
+    ),
+    QuantumGateSimulator: (props: any) => (
+      <Suspense fallback={<Skeleton />}>
+        <QuantumGateSimulator {...props} />
       </Suspense>
     ),
     Sticker: Sticker,

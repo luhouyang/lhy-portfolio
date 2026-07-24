@@ -1,21 +1,52 @@
 export type WorkCategory = "publication" | "software" | "project";
 
 export type WorkTag =
+  // AI & Data Science
   | "AI/ML"
-  | "Research"
-  | "Robotics"
-  | "Computer Vision"
-  | "Flutter"
-  | "Community"
   | "Machine Learning"
+  | "Computer Vision"
+  | "Cognitive"
+  | "Algorithm"
+  | "TensorFlow"
+  | "Scikit-Learn"
+  
+  // Development & Tech Stack
+  | "Flutter"
+  | "React"
+  | "Firebase"
+  | "Unity"
   | "Systems Engineering"
   | "Cybersecurity"
-  | "React"
   | "Automation"
   | "Quantum"
+  
+  // Domains & Mediums
+  | "App"
+  | "Service"
+  | "Game"
   | "Mixed Reality"
-  | "Cognitive"
-  | "Unity";
+  | "AR"
+  | "Hardware"
+  | "Robotics"
+  
+  // Fields & Industries
+  | "Research"
+  | "Finance"
+  | "Education"
+  | "Environment"
+  | "Sustainability"
+  
+  // Community, Events & Extracurriculars
+  | "Community"
+  | "Event"
+  | "Workshop"
+  | "Hackathon"
+  | "Competition"
+  | "GDG"
+  | "Organizing"
+  | "Volunteering"
+  | "Public Relations"
+  | "Sports";
 
 export interface WorkSticker {
   src: string;
@@ -27,19 +58,27 @@ export interface WorkSticker {
   offsetY?: number;
 }
 
-export interface Work {
+export type Work = {
   id: string;
-  category: WorkCategory;
+  category: string;
   title: string;
-  tags: WorkTag[];
+  tags: string[];
+  languages?: string[];
   date: string;
   description: string;
-  doi?: string;
-  githubUrl?: string;
-  stars?: number;
-  forks?: number;
-  stickers?: WorkSticker[];
-}
+  githubUrl: string;
+  stars: number;
+  forks: number;
+  stickers?: {
+    src: string;
+    position: "left" | "right";
+    rotation?: number;
+    size?: number;
+    offsetX?: number;
+    offsetY?: number;
+    alt?: string;
+  }[];
+};
 
 export interface TutorialMeta {
   slug: string;

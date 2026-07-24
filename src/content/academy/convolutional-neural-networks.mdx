@@ -1,0 +1,289 @@
+# Convolutional Neural Networks: From Biological Visual Cortex to Deep Learning
+
+<Sticker src="/assets/stickers/doguu.png" size={120} initialRotation={-15} />
+
+Convolutional Neural Networks, or CNNs, are one of the most important architectures in modern computer vision. They are used for image classification, object detection, medical imaging, OCR, autonomous perception, satellite image analysis, and many other tasks.
+
+Their design is inspired by the way biological vision systems process information: not by analyzing the entire visual field at once, but by detecting local patterns, combining them into more complex patterns, and building increasingly abstract representations layer by layer.
+
+> "The visual cortex is not merely a passive camera, but an active hierarchy of feature extractors." — _Computational Neuroscience Principle_
+
+---
+
+## 1. Vision as a Hierarchical Problem
+
+Recognizing an object is not simple.
+
+When you look at an image, your brain does not first memorize every pixel. Instead, it extracts structure:
+
+- edges,
+- corners,
+- textures,
+- shapes,
+- object parts,
+- and finally whole objects.
+
+For example, to recognize a cat, the visual system may first detect edges, then fur-like textures, then ear shapes, then eye patterns, and finally the overall face structure.
+
+CNNs follow a similar strategy. Early layers detect simple local patterns. Deeper layers combine those patterns into more complex and meaningful features.
+
+---
+
+## 2. Biological Inspiration: The Eye and the Visual Cortex
+
+Long before artificial neural networks became practical, biological systems had already solved visual recognition through evolution.
+
+Light enters the eye and is converted into electrical signals by photoreceptors in the retina. These signals are processed through several stages before reaching the visual cortex.
+
+<Mermaid
+  chart={`
+  graph LR;
+    Retina-->|Photoreceptor Signals| LGN;
+    LGN-->|Spatial Relay| V1_Simple[V1 Simple Cells];
+    V1_Simple-->|Edge and Orientation Maps| V1_Complex[V1 Complex Cells];
+    V1_Complex-->|Hierarchical Abstraction| IT_Cortex[Inferior Temporal Cortex];
+`}
+/>
+
+In the 1950s and 1960s, neuroscientists David Hubel and Torsten Wiesel studied the visual cortex and discovered that certain neurons respond selectively to specific visual features.
+
+Some neurons responded strongly to edges at a particular orientation. Others responded to movement or to patterns in a small region of the visual field.
+
+They identified two important types of cells:
+
+### Simple Cells
+
+Simple cells respond to localized patterns, such as an edge in a particular position and orientation.
+
+This behavior is similar to a convolutional filter scanning across an image.
+
+### Complex Cells
+
+Complex cells respond to similar patterns even if the pattern shifts slightly.
+
+This behavior is similar to pooling operations in CNNs, which help the network become less sensitive to small translations.
+
+So, while CNNs are not exact models of the brain, they borrow a powerful idea:
+
+> Local filters detect patterns, and hierarchical layers combine those patterns into more abstract representations.
+
+---
+
+## 3. A Brief History of Convolutional Architectures
+
+The development of CNNs is a story of ideas from neuroscience, mathematics, and engineering gradually coming together.
+
+### Neocognitron, 1980
+
+Kunihiko Fukushima proposed the Neocognitron, one of the earliest hierarchical vision models.
+
+It introduced ideas that are still central to CNNs:
+
+- local receptive fields,
+- hierarchical feature extraction,
+- pooling for positional robustness.
+
+The Neocognitron was directly inspired by Hubel and Wiesel's work on the visual cortex.
+
+### LeNet-5, 1998
+
+Yann LeCun and collaborators developed LeNet-5, a convolutional network trained using gradient descent.
+
+LeNet was successfully used for handwritten digit recognition, especially on the MNIST dataset.
+
+It established the classic CNN pipeline:
+
+```text
+Convolution -> Activation -> Pooling -> Fully Connected Layers
+```
+
+This was a major milestone because it showed that convolutional networks could learn useful visual filters from data.
+
+### AlexNet, 2012
+
+AlexNet, developed by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton, dramatically changed computer vision.
+
+It won the ImageNet Large Scale Visual Recognition Challenge by a large margin.
+
+AlexNet showed that:
+
+- deeper CNNs could be trained effectively,
+- GPUs could accelerate convolutional learning,
+- large datasets could unlock powerful visual representations.
+
+After AlexNet, CNNs became the dominant architecture for image recognition.
+
+---
+
+## 4. The Convolution Operation
+
+At the core of a CNN is the convolution operation.
+
+In simple terms, convolution slides a small matrix, called a kernel or filter, across an input image or feature map.
+
+At each position, the kernel performs element-wise multiplication and sums the result.
+
+Mathematically, for an input matrix $X$ and a kernel $K$, the output feature map $S$ can be written as:
+
+$$
+S(i,j) = \sum_{m} \sum_{n} X(i+m, j+n) K(m,n)
+$$
+
+In real neural networks, we usually also add a bias and apply a nonlinear activation function:
+
+$$
+a(i,j) = \sigma \left( b + \sum_{m} \sum_{n} X(i+m, j+n) K(m,n) \right)
+$$
+
+A common activation function is ReLU:
+
+$$
+\sigma(x) = \max(0, x)
+$$
+
+The nonlinearity is important because without it, stacking many convolutional layers would be equivalent to a single linear transformation.
+
+---
+
+## 5. Interactive Convolution Explorer
+
+The visualizer below shows how a small kernel transforms a small input matrix.
+
+Try switching between different kernels:
+
+- **Edge filter**: responds strongly where neighboring values change rapidly.
+- **Sharpen filter**: emphasizes the center value relative to its neighbors.
+- **Box blur**: averages nearby values, reducing sharp variation.
+
+You can also click a cell in the output feature map to inspect which input values contributed to that result.
+
+<CNNKernelVisualizer />
+
+This demonstrates the key idea behind convolution:
+
+> A kernel measures the presence of a local pattern.
+
+In handcrafted image processing, humans design these kernels. In a CNN, the network learns the kernels automatically through backpropagation.
+
+---
+
+## 6. Why Convolution Works So Well
+
+Convolutional networks are effective because they use three powerful assumptions about visual data.
+
+### 1. Locality
+
+Nearby pixels are usually more related than distant pixels.
+
+An edge, texture, or small shape can be detected using a local neighborhood.
+
+This is why small kernels such as $3 \times 3$ filters are so common.
+
+### 2. Weight Sharing
+
+The same filter is applied across the entire image.
+
+This means a filter that detects a vertical edge in one part of the image can also detect a vertical edge elsewhere.
+
+Weight sharing greatly reduces the number of parameters compared to a fully connected network.
+
+### 3. Translation Equivariance
+
+If a pattern shifts slightly, the convolution response shifts in a predictable way.
+
+For example, if an edge moves two pixels to the right, the edge detector's response also moves two pixels to the right.
+
+Pooling layers then help convert this equivariance into a degree of translation invariance, making the network less sensitive to small positional changes.
+
+---
+
+## 7. From Edges to Objects
+
+A CNN usually contains many convolutional layers stacked together.
+
+The first layers may learn simple detectors:
+
+- vertical edges,
+- horizontal edges,
+- color contrasts,
+- small texture patterns.
+
+Middle layers may combine these into more complex features:
+
+- corners,
+- curves,
+- repeated textures,
+- object parts.
+
+Deeper layers may represent high-level concepts:
+
+- eyes,
+- wheels,
+- leaves,
+- digits,
+- faces,
+- entire objects.
+
+This hierarchy is one of the reasons CNNs are so powerful.
+
+For example, in an OCR system, early layers may detect strokes and curves. Middle layers may detect character fragments. Deeper layers may recognize full handwritten symbols.
+
+In a plant health classifier, early layers may detect color patches and leaf boundaries. Deeper layers may learn patterns associated with nutrient deficiency, discoloration, or disease.
+
+---
+
+## 8. Convolution, Pooling, and Feature Maps
+
+A typical CNN layer produces one or more **feature maps**.
+
+A feature map is the output of applying one filter across the input.
+
+If a layer has 32 filters, it produces 32 feature maps. Each map may respond to a different type of pattern.
+
+Pooling layers reduce spatial size. For example, max pooling selects the largest value in a small region.
+
+This helps by:
+
+- reducing computation,
+- controlling overfitting,
+- increasing receptive field,
+- making representations more robust to small shifts.
+
+Modern architectures sometimes replace pooling with strided convolutions, but the core idea remains: build increasingly abstract representations while controlling spatial resolution.
+
+---
+
+## 9. Biological Inspiration vs Artificial Networks
+
+It is important to understand that CNNs are inspired by biology, but they are not exact models of the brain.
+
+Similarities:
+
+- hierarchical processing,
+- local receptive fields,
+- edge and orientation sensitivity,
+- increasing abstraction through layers.
+
+Differences:
+
+- biological neurons are far more complex,
+- learning rules in the brain differ from backpropagation,
+- CNNs are simplified mathematical models optimized for engineering tasks.
+
+The value of the biological analogy is that it provides a useful design principle:
+
+> Build vision systems as hierarchies of local feature detectors.
+
+---
+
+## Conclusion
+
+Convolutional Neural Networks are one of the great success stories of modern machine learning.
+
+They combine ideas from neuroscience, signal processing, and optimization to solve visual recognition problems at scale.
+
+Their power comes from a simple but deep insight:
+
+> Complex visual understanding can be built from local patterns, combined layer by layer into increasingly abstract representations.
+
+From the visual cortex to modern deep learning, CNNs show how biological intuition can inspire practical mathematical architectures for intelligent systems.
