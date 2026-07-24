@@ -1,55 +1,20 @@
-import { useState } from "react";
-import { portfolioWorks } from "../data/works";
 import { Star, GitFork, ExternalLink } from "lucide-react";
 import Sticker from "../components/UI/Sticker";
+import { useWorksFilter } from "../hooks/useWorksFilter";
 
 const langColors: Record<string, string> = {
-  Dart: "#00B4AB",
   Python: "#3572A5",
-  Firebase: "#FFCA28",
-  Unity: "#222c37",
-  "C#": "#178600",
-  Android: "#3DDC84",
+  Dart: "#00B4AB",
+  "C++": "#f34b7d",
   TypeScript: "#3178c6",
   JavaScript: "#f1e05a",
-  "C++": "#f34b7d",
-  Java: "#b07219",
 };
 
 export default function Works() {
-  const [filter, setFilter] = useState("All");
+  const { filters, activeTags, toggleTag, filteredWorks } = useWorksFilter();
 
-  const filters = [
-    "All",
-    "AI/ML",
-    "Robotics",
-    "Computer Vision",
-    "Flutter",
-    "Mixed Reality",
-    "App",
-    "Hackathon",
-    "Workshop",
-    "Event",
-    "Community",
-  ];
-
-  // Sort portfolio works by date descending (most recent first) before filtering
-  const sortedWorks = [...portfolioWorks].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
-
-  const displayedWorks =
-    filter === "All"
-      ? sortedWorks
-      : sortedWorks.filter((work) => work.tags.includes(filter));
-
-  const getLanguageColor = (language: string): string => {
-    return langColors[language] ?? "#a8a29e";
-  };
-
-  // Helper to render a cluster of stickers on a specific side
   const renderStickerCluster = (
-    work: (typeof portfolioWorks)[0],
+    work: ReturnType<typeof useWorksFilter>["filteredWorks"][number],
     side: "left" | "right"
   ) => {
     const sideStickers = work.stickers?.filter((s) => s.position === side) || [];
@@ -88,37 +53,36 @@ export default function Works() {
         </h1>
 
         <div className="flex flex-wrap gap-3">
-          {filters.map((f) => (
+          {filters.map((filter) => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
+              key={filter}
+              onClick={() => toggleTag(filter)}
               className={`px-4 py-1.5 rounded-full text-sm font-mono transition-colors border ${
-                filter === f
+                activeTags.includes(filter)
                   ? "bg-[#c2410c] text-white border-[#c2410c]"
                   : "bg-[#f5f5f4] dark:bg-[#292524] text-[#44403c] dark:text-[#d6d3d1] hover:border-[#c2410c] hover:text-[#c2410c] border-[#e7e5e4] dark:border-[#44403c]"
               }`}
             >
-              {f}
+              {filter}
             </button>
           ))}
         </div>
       </header>
 
       <div className="flex flex-col gap-16">
-        {displayedWorks.map((work) => (
+        {filteredWorks.map((work) => (
           <div
             key={work.id}
             className="flex flex-col md:flex-row items-center gap-8"
           >
-            {/* LEFT STICKER CLUSTER */}
             {renderStickerCluster(work, "left")}
 
-            {/* THE ARCHIVAL CARD */}
             <div className="archival-card flex flex-col group w-full max-w-2xl relative z-10">
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-xl font-medium text-[#292524] dark:text-[#fafaf9] group-hover:text-[#c2410c] transition-colors">
                   {work.title}
                 </h3>
+
                 <span className="text-xs font-mono text-[#78716c] dark:text-[#a8a29e]">
                   {new Date(work.date).getFullYear()}
                 </span>
@@ -128,24 +92,27 @@ export default function Works() {
                 {work.description}
               </p>
 
-              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mt-auto pt-4 border-t border-[#e7e5e4] dark:border-[#44403c]">
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-mono text-[#78716c] dark:text-[#a8a29e]">
-                  {work.languages && work.languages.length > 0 ? (
-                    work.languages.map((language) => (
+              <div className="flex justify-between items-center mt-auto pt-4 border-t border-[#e7e5e4] dark:border-[#44403c]">
+                <div className="flex items-center gap-4 text-xs font-mono text-[#78716c] dark:text-[#a8a29e]">
+                  {work.tags.includes("Flutter") && (
+                    <span className="flex items-center gap-1.5">
                       <span
-                        key={language}
-                        className="flex items-center gap-1.5"
-                      >
-                        <span
-                          className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20"
-                          style={{
-                            backgroundColor: getLanguageColor(language),
-                          }}
-                        ></span>
-                        {language}
-                      </span>
-                    ))
-                  ) : null}
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: langColors["Dart"] }}
+                      ></span>
+                      Dart
+                    </span>
+                  )}
+
+                  {work.tags.includes("AI/ML") && (
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: langColors["Python"] }}
+                      ></span>
+                      Python
+                    </span>
+                  )}
 
                   {work.githubUrl && work.stars !== undefined && (
                     <span className="flex items-center gap-1">
@@ -173,7 +140,6 @@ export default function Works() {
               </div>
             </div>
 
-            {/* RIGHT STICKER CLUSTER */}
             {renderStickerCluster(work, "right")}
           </div>
         ))}
