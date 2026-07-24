@@ -1,6 +1,11 @@
+import { useMemo, useState } from "react";
+import { portfolioWorks } from "../data/works";
 import { Star, GitFork, ExternalLink } from "lucide-react";
 import Sticker from "../components/UI/Sticker";
-import { useWorksFilter } from "../hooks/useWorksFilter";
+import type { WorkTag } from "../types";
+
+type WorkFilter = WorkTag | "All";
+type WorkItem = (typeof portfolioWorks)[number];
 
 const langColors: Record<string, string> = {
   Python: "#3572A5",
@@ -11,33 +16,79 @@ const langColors: Record<string, string> = {
 };
 
 export default function Works() {
-  const { filters, activeTags, toggleTag, filteredWorks } = useWorksFilter();
+  const [filter, setFilter] = useState<WorkFilter>("All");
 
-  const renderStickerCluster = (
-    work: ReturnType<typeof useWorksFilter>["filteredWorks"][number],
-    side: "left" | "right"
-  ) => {
-    const sideStickers = work.stickers?.filter((s) => s.position === side) || [];
+  const filters: WorkFilter[] = [
+    "All",
+    "AI/ML",
+    "Robotics",
+    "Computer Vision",
+    "Flutter",
+    "Mixed Reality",
+    "App",
+    "Hackathon",
+    "Workshop",
+    "Event",
+    "Community",
+  ];
 
-    if (sideStickers.length === 0) return null;
+  // Sort works by latest date first
+  const sortedWorks = useMemo(() => {
+    const getTimestamp = (date: string) => {
+      const parsed = new Date(date.trim());
+      return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+    };
+
+    return [...portfolioWorks].sort((a, b) => {
+      const aTime = getTimestamp(a.date);
+      const bTime = getTimestamp(b.date);
+
+      // Latest first
+      if (bTime !== aTime) {
+        return bTime - aTime;
+      }
+
+      // Fallback for same-date items
+      return b.date.trim().localeCompare(a.date.trim());
+    });
+  }, []);
+
+  const displayedWorks = useMemo(() => {
+    if (filter === "All") {
+      return sortedWorks;
+    }
+
+    const selectedTag = filter;
+
+    return sortedWorks.filter((work) => work.tags.includes(selectedTag));
+  }, [sortedWorks, filter]);
+
+  // Helper to render a cluster of stickers on a specific side
+  const renderStickerCluster = (work: WorkItem, side: "left" | "right") => {
+    const sideStickers =
+      work.stickers?.filter((sticker) => sticker.position === side) || [];
+
+    if (sideStickers.length === 0) {
+      return null;
+    }
 
     return (
       <div className="relative flex-shrink-0 w-32 h-32 md:w-40 md:h-40 hidden md:block">
-        {sideStickers.map((sticker, idx) => (
+        {sideStickers.map((sticker, index) => (
           <div
-            key={idx}
+            key={index}
             className="absolute"
             style={{
-              left: `${sticker.offsetX || 0}px`,
-              top: `${sticker.offsetY || 0}px`,
-              zIndex: idx,
+              left: `${sticker.offsetX ?? 0}px`,
+              top: `${sticker.offsetY ?? 0}px`,
+              zIndex: index,
             }}
           >
             <Sticker
               src={sticker.src}
               alt={sticker.alt || work.title}
-              size={sticker.size || 80}
-              initialRotation={sticker.rotation || 0}
+              size={sticker.size ?? 80}
+              initialRotation={sticker.rotation ?? 0}
             />
           </div>
         ))}
@@ -53,30 +104,32 @@ export default function Works() {
         </h1>
 
         <div className="flex flex-wrap gap-3">
-          {filters.map((filter) => (
+          {filters.map((f) => (
             <button
-              key={filter}
-              onClick={() => toggleTag(filter)}
+              key={f}
+              onClick={() => setFilter(f)}
               className={`px-4 py-1.5 rounded-full text-sm font-mono transition-colors border ${
-                activeTags.includes(filter)
+                filter === f
                   ? "bg-[#c2410c] text-white border-[#c2410c]"
                   : "bg-[#f5f5f4] dark:bg-[#292524] text-[#44403c] dark:text-[#d6d3d1] hover:border-[#c2410c] hover:text-[#c2410c] border-[#e7e5e4] dark:border-[#44403c]"
               }`}
             >
-              {filter}
+              {f}
             </button>
           ))}
         </div>
       </header>
 
       <div className="flex flex-col gap-16">
-        {filteredWorks.map((work) => (
+        {displayedWorks.map((work) => (
           <div
             key={work.id}
             className="flex flex-col md:flex-row items-center gap-8"
           >
+            {/* LEFT STICKER CLUSTER */}
             {renderStickerCluster(work, "left")}
 
+            {/* PROJECT CARD */}
             <div className="archival-card flex flex-col group w-full max-w-2xl relative z-10">
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-xl font-medium text-[#292524] dark:text-[#fafaf9] group-hover:text-[#c2410c] transition-colors">
@@ -84,7 +137,7 @@ export default function Works() {
                 </h3>
 
                 <span className="text-xs font-mono text-[#78716c] dark:text-[#a8a29e]">
-                  {new Date(work.date).getFullYear()}
+                  {new Date(work.date.trim()).getFullYear()}
                 </span>
               </div>
 
@@ -140,6 +193,7 @@ export default function Works() {
               </div>
             </div>
 
+            {/* RIGHT STICKER CLUSTER */}
             {renderStickerCluster(work, "right")}
           </div>
         ))}
