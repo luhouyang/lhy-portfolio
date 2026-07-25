@@ -81,9 +81,19 @@ export type Work = {
 };
 
 export interface TutorialMeta {
+  type?: "tutorial";
   slug: string;
   title: string;
   date: string;
   tags: string[];
   description: string;
 }
+
+export interface TutorialSectionSeparator {
+  type: "section";
+  id: string;
+  title: string;
+  description?: string;
+}
+
+export type AcademyCatalogItem = TutorialMeta | TutorialSectionSeparator;
