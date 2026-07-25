@@ -1,0 +1,80 @@
+# Quantum Computing, Explained Simply
+
+<Sticker src="/assets/stickers/robot.png" size={120} initialRotation={15} />
+
+Quantum computing sounds hard, but the big ideas fit in your hand. This guide follows the friendly approach of Chris Bernhardt's book _Quantum Computing for Everyone_, and it ends with a surprising twist: quantum computing is not some weird add-on to normal computing. It is the deeper, more fundamental version.
+
+## Bits, Gates, and Logic: The Old Way
+
+A normal computer thinks in **bits** — tiny switches that are either `0` or `1`. It combines them with simple rules called gates:
+
+- **NOT** flips a bit.
+- **AND** gives `1` only if both inputs are `1`.
+
+<Mermaid
+  chart={`
+  graph LR;
+    A["Input x"]-->NOT["NOT"];
+    NOT-->B["flipped x"];
+    C["Input x"]-->AND["AND"];
+    D["Input y"]-->AND;
+    AND-->E["x AND y"];
+`}
+/>
+
+Notice that NOT is reversible — if you know the output, you can work backward to the input. That idea of "undoable" steps turns out to be the secret doorway into quantum computing.
+
+## The Qubit: A Spinning Coin
+
+A bit is a coin lying flat: heads or tails. A **qubit** is that coin spinning in the air. While it spins, it is not heads or tails yet — it holds a blend of both possibilities.
+
+When you finally look, the coin lands on one side. That is **measurement**: the spinning stops, and you get a definite `0` or `1`.
+
+Here is the twist. A normal bit is just a qubit that has already landed. So the qubit is the more general, more fundamental object. The bit is the special case.
+
+## Try It: Play with a Qubit
+
+The bars below show how likely the qubit is to land on `0` or `1`.
+
+<QuantumGateSimulator />
+
+Try this:
+
+1. Click **Hadamard (H)**. The qubit becomes a perfect 50/50 spin.
+2. Click **Hadamard** again. It lands back on a sure `0`. The possibilities canceled out.
+3. Click **Pauli-X (X)** to flip it, like a NOT gate.
+
+That canceling-out is called **interference**, and it is the trick quantum computers use to push wrong answers down and right answers up.
+
+## Quantum Gates
+
+The buttons you pressed are **quantum gates**. They gently rotate the spinning coin. The neat part: every quantum gate can be undone, just like the NOT gate earlier. In the quantum world, this reversibility is not optional — it is a law of nature.
+
+## Spooky Connections: Entanglement
+
+Two qubits can become linked in a special way called **entanglement**. Once linked, measuring one instantly tells you what the other will be, even if they are far apart.
+
+Imagine two magic coins flipped in separate rooms that always land on the same side. Every single time. That is the kind of connection entangled qubits share.
+
+Einstein disliked this and called it **"spooky action at a distance."** It is real, but it does not let you send messages faster than light, because each flip still looks random on its own. The surprising part is the perfect match between the two.
+
+## Teleportation and Secret Codes
+
+Entanglement lets you do two clever things:
+
+- **Teleportation:** transfer a qubit's state somewhere else using a shared entangled pair and a couple of normal messages. Nothing physical moves, and the original is used up in the process.
+- **Secret codes:** build unbreakable encryption keys, because anyone who tries to peek at the qubits disturbs them and gives themselves away.
+
+## What Are Quantum Computers Good For?
+
+Quantum computers will not replace your laptop. They are not faster at browsing or gaming. But for certain problems — searching huge lists, breaking codes, simulating molecules for new medicines — interference and entanglement give them a dramatic edge.
+
+They are also delicate. Qubits lose their quantum behavior easily, which is why today's machines are small, carefully shielded, and kept colder than outer space.
+
+## The Big Idea
+
+We started with the humble bit and ended somewhere unexpected. A normal bit is really just a qubit that has been forced to land. So the qubit, not the bit, is the true basic building block of computation.
+
+That is the heart of Bernhardt's message: quantum computing is not a separate, exotic subject. It is what computing looks like at its most fundamental.
+
+**Want to go deeper?** Pick up _Quantum Computing for Everyone_ by Chris Bernhardt (MIT Press). It explains all of this with nothing more than high-school math.

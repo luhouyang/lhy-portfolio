@@ -1,0 +1,156 @@
+# Quantum Computing Basics: Superposition, Entanglement, and Qubits
+
+<Sticker
+  src="/assets/stickers/robot.png"
+  size={120}
+  initialRotation={15}
+/>
+
+Quantum computing often sounds like it requires a physics degree. It does not. As the mathematician Chris Bernhardt argues in _Quantum Computing for Everyone_, the whole subject can be understood with comfortable high-school mathematics — and the ideas, once you see them, are surprisingly simple.
+
+This article follows that book's path. We will start with the classical computing you already know, then discover something remarkable: quantum computing is not a strange exotic cousin of classical computing. It is the more fundamental form. The basic unit of computation is the qubit, not the bit.
+
+> "Nature isn't classical, dammit, and if you want to make a simulation of nature, you'd better make it quantum mechanical." — _Richard Feynman_
+
+> "Entanglement is easier to describe mathematically than verbally." — _Chris Bernhardt_
+
+## 1. A Quick Recap: Bits, Gates, and Logic
+
+Before going quantum, let's recall how classical computers think. Everything reduces to **bits**, each holding a value of either `0` or `1`. We combine bits using **logic gates**:
+
+- **NOT** flips a bit: `0` becomes `1`, and `1` becomes `0`.
+- **AND** outputs `1` only if both inputs are `1`.
+- **OR** outputs `1` if at least one input is `1`.
+
+<Mermaid
+  chart={`
+  graph LR;
+    A["Input x"]-->NOT["NOT"];
+    NOT-->B["NOT x"];
+    C["Input x"]-->AND["AND"];
+    D["Input y"]-->AND;
+    AND-->E["x AND y"];
+`}
+/>
+
+Here is a subtle but important observation. The NOT gate is **reversible**: if I tell you the output, you can perfectly recover the input. But AND and OR are not — knowing the output of an AND gate is `0` does not tell you which input was `0`.
+
+This matters because, as Edward Fredkin showed with his famous **billiard ball computer**, computation does not fundamentally require throwing information away. You can build a complete computer out of reversible operations. Keep that idea in your pocket; it is the bridge to quantum computing, where every operation must be reversible.
+
+## 2. The Qubit: A More Fundamental Bit
+
+A classical bit is a coin lying flat on the table: heads (`0`) or tails (`1`), nothing else.
+
+A **qubit** is that coin spinning in the air. While it spins, it is described by a combination of both possibilities:
+
+$$
+|\psi\rangle = \alpha |0\rangle + \beta |1\rangle
+$$
+
+Here $|0\rangle$ and $|1\rangle$ are the two outcomes, and $\alpha$ and $\beta$ are **probability amplitudes**. They can be positive, negative, or even complex numbers. The only rule is that the probabilities must add up to one:
+
+$$
+|\alpha|^2 + |\beta|^2 = 1
+$$
+
+Notice something profound: a classical bit is just a special case of a qubit. A bit sitting at `0` is simply the qubit state where $\alpha = 1$ and $\beta = 0$. The qubit is the general object; the bit is the restricted one. This is what Bernhardt means when he says the qubit, not the bit, is the true basic unit of computation.
+
+## 3. Measurement: Forcing the Coin Down
+
+You cannot look at a spinning coin and see "both." Eventually you slap it down, and it lands on one side. **Measurement** does the same to a qubit: it forces a definite outcome.
+
+- The chance of landing on `0` is $|\alpha|^2$.
+- The chance of landing on `1` is $|\beta|^2$.
+
+After measurement, the qubit stays in the state you observed. The rich superposition is gone, replaced by an ordinary classical bit. The art of quantum computing is arranging things so that, when the coin finally lands, it lands on the answer you want.
+
+## 4. Try It: The Single-Qubit Laboratory
+
+The simulator below lets you push a qubit around and watch its amplitudes change. The bars show the probability of each outcome if you measured right now.
+
+<QuantumGateSimulator />
+
+Try these experiments:
+
+1. Click **Reset**, then **Hadamard (H)**. The qubit becomes a perfect 50/50 mix — the spinning coin.
+2. Click **Hadamard** again. It snaps back to a certain `0`. The two paths interfered and canceled.
+3. Click **Pauli-X (X)** to flip `0` into `1`, exactly like a classical NOT.
+4. Click **Hadamard**, then **Pauli-Z (Z)**, then **Hadamard** again. The Z gate changed only the sign of an amplitude, yet the final answer flipped. This is the power of phase.
+
+## 5. Quantum Gates: Reversible Transformations
+
+Quantum gates are matrices that rotate the qubit's state vector. Three you have just used:
+
+$$
+H = \frac{1}{\sqrt{2}} \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}, \quad
+X = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}, \quad
+Z = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}
+$$
+
+- The **Hadamard (H)** gate creates superposition, turning a definite state into a balanced mix.
+- The **Pauli-X (X)** gate is the quantum NOT, swapping the two amplitudes.
+- The **Pauli-Z (Z)** gate flips the sign of the $|1\rangle$ amplitude — invisible to a single measurement, but crucial for interference.
+
+Remember Fredkin's insight from section 1? Every one of these gates is **reversible**. Run a gate forward, then backward, and you return exactly to where you started. This reversibility is not optional in quantum mechanics — it is the law.
+
+## 6. Entanglement: Spooky Action at a Distance
+
+Now take two qubits and let them interact. Sometimes they become **entangled**: their fates are linked so tightly that you can no longer describe one without the other.
+
+The classic entangled state is the Bell state:
+
+$$
+|\Phi^+\rangle = \frac{1}{\sqrt{2}} (|00\rangle + |11\rangle)
+$$
+
+Read this carefully. It says the pair is either `00` or `11`, each with 50% probability — but never `01` or `10`. Measure the first qubit and get `0`, and the second is instantly `0`. Get `1`, and the second is instantly `1`.
+
+This is what Einstein, uneasy with the idea, called **"spooky action at a distance."** It is real, and it has been confirmed in laboratories many times. But it does not let you send messages faster than light, because your own measurement result is still random. The magic is in the correlation, not in any signal.
+
+As Bernhardt notes, entanglement is genuinely easier to write down than to explain in words — and the equation above is the whole story.
+
+## 7. Quantum Teleportation
+
+Entanglement enables one of the strangest tricks in physics: **quantum teleportation**. Despite the name, nothing physical travels. Instead, a qubit's state is transferred from one place to another using a shared entangled pair plus two ordinary classical bits.
+
+<Mermaid
+  chart={`
+  graph LR;
+    PAIR["Shared entangled pair"]-->AL["Alice's half"];
+    PAIR-->BO["Bob's half"];
+    Q["Qubit to send"]-->AL;
+    AL-->|"measure, send 2 classical bits"| BO;
+    BO-->OUT["Reconstructed qubit"];
+`}
+/>
+
+Alice measures her qubit together with her half of the entangled pair, then phones Bob her two classical results. Bob uses those two bits to correct his half, and it becomes an exact copy of the original qubit. The original is destroyed in the process — you cannot copy a qubit, a rule called the **no-cloning theorem**.
+
+## 8. Quantum Cryptography
+
+The no-cloning theorem and the disturbance caused by measurement turn out to be gifts for security. In **quantum key distribution**, two parties build a shared secret key by sending qubits. Any eavesdropper who tries to measure those qubits inevitably disturbs them, revealing their presence. Security here rests on the laws of physics, not on how hard a math problem is to solve.
+
+## 9. Quantum Algorithms: Where the Speed Comes From
+
+A system of $n$ qubits involves $2^n$ basis states at once. But you cannot simply read them all out — measurement gives just one answer. The real trick is **interference**: quantum algorithms choreograph the amplitudes so that wrong answers cancel and right answers reinforce.
+
+This is the engine behind the famous speedups:
+
+- **Grover's algorithm** searches an unsorted list of $N$ items in about $\sqrt{N}$ steps instead of $N$.
+- **Shor's algorithm** factors large numbers exponentially faster than the best known classical methods, which is why quantum computing matters for cryptography.
+
+These are not universal accelerators. For most everyday tasks a quantum computer offers no advantage. But for the right problems, the combination of superposition, entanglement, and interference is transformative.
+
+## 10. Building Real Quantum Computers
+
+The theory is clean; the engineering is brutal. Qubits are extraordinarily fragile. Any stray interaction with the environment causes **decoherence**, leaking the quantum information away and turning qubits back into ordinary bits.
+
+Building a useful machine means fighting this constantly — shielding qubits, cooling them near absolute zero, and using **quantum error correction**, where many noisy physical qubits are woven together to form one reliable logical qubit. This overhead is the central challenge standing between today's small experimental devices and the large fault-tolerant computers the algorithms assume.
+
+## Conclusion: The Qubit Is the Fundamental Unit
+
+We began with the classical bit and ended somewhere unexpected. Quantum computing is not a separate, exotic discipline bolted onto classical computing. Classical computing is the special case — what you get when you restrict a qubit to the states $|0\rangle$ and $|1\rangle$ and never let it spin.
+
+The deeper view, and the one Bernhardt leaves you with, is that the qubit is the true basic unit of computation. Classical bits are simply qubits that have been forced to make up their minds.
+
+**Further reading:** This article follows the structure and spirit of _Quantum Computing for Everyone_ by Chris Bernhardt (MIT Press), an excellent next step if you want the full treatment with high-school-level math.

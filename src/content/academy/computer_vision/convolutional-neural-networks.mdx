@@ -1,0 +1,132 @@
+# Convolutional Neural Networks: From Biological Visual Cortex to Deep Learning
+
+<Sticker src="/assets/stickers/doguu.png" size={120} initialRotation={-15} />
+
+Understanding the eye is only the first step to understanding how we see. Vision is as much about perceiving — about what the brain does with light — as it is about the light itself.
+
+This article follows that idea, drawing on the neuroscientist Richard Masland's _We Know It When We See It_. Masland spent four decades studying the retina, and his central lesson is that the eye and the brain are not separate cameras and computers. They are one continuous, layered, learning system. Remarkably, that same insight is the blueprint for Convolutional Neural Networks, the architecture behind modern computer vision. This is where neurobiology and machine learning genuinely meet.
+
+> "The visual cortex is not merely a passive camera, but an active hierarchy of feature extractors." — _Computational Neuroscience Principle_
+
+## 1. The Retina: A Piece of Brain in Your Eye
+
+The first surprise, and the one Masland is most eager to share, is that the retina is not a simple sensor. It is effectively a part of the brain that gets pushed out into the eye during development. It does an astonishing amount of computation before a single signal ever leaves the eye.
+
+The retina is built from five cooperating cell types. Three layers carry signals forward — **photoreceptor cells**, **bipolar cells**, and **ganglion cells** — while two more, **horizontal cells** and **amacrine cells**, weave sideways between them, linking everything together.
+
+<Mermaid
+  chart={`
+  graph TB;
+    Light["Light entering the eye"]-->PR["Photoreceptor cells"];
+    PR-->HC["Horizontal cells"];
+    PR-->BP["Bipolar cells"];
+    HC-->BP;
+    BP-->AC["Amacrine cells"];
+    BP-->GC["Ganglion cells"];
+    AC-->GC;
+    GC-->|"about 30 parallel streams"| ON["Optic nerve"];
+`}
+/>
+
+Here is the detail that matters most for us. No single cell type dominates. The retina holds roughly equal proportions of many different kinds of cell, each tuned to something specific. Some respond to motion. Others respond to light-dark contrasts, which is to say, edges. Some are packed densely for fine detail; others are spread out to survey the whole scene.
+
+The result is that the eye does not send the brain a photograph. As Masland puts it, "the visual image is decomposed by the retina into roughly thirty parallel streams, each reporting on its own specific feature of the visual world."
+
+Hold that thought. Thirty parallel streams, each extracting one kind of feature, is almost exactly what a convolutional layer does.
+
+## 2. From Eye to Brain: Two Destinations and a Loop
+
+The optic nerve carries the retina's output to two places. The **superior colliculus** handles visual orienting — deciding what is interesting and where the eyes should look next. The **lateral geniculate nucleus**, or LGN, passes information onward to the visual cortex at the back of the brain.
+
+But the LGN is not a simple relay station. A huge number of neurons carry information _backwards_, from the visual cortex down to the LGN, forming what Masland calls an "immense feedback circuit" whose full purpose we still do not understand.
+
+<Mermaid
+  chart={`
+  graph LR;
+    R["Retina"]-->ON["Optic nerve"];
+    ON-->SC["Superior colliculus: orienting and attention"];
+    ON-->LGN["Lateral geniculate nucleus, LGN"];
+    LGN-->VC["Visual cortex"];
+    VC-->|"immense feedback circuit"| LGN;
+`}
+/>
+
+The visual cortex itself is not one region but a patchwork of specialized areas distributed across the brain, all communicating with one another. Masland is refreshingly honest that from this point on, the map gets fuzzy. Vision, it turns out, is not a clean assembly line. It is a web.
+
+## 3. Simple and Complex Cells: The Blueprint for Convolution
+
+In the primary visual cortex, V1, the neurobiologists David Hubel and Torsten Wiesel made the discovery that would eventually inspire deep learning. They found neurons that respond selectively to specific features — an edge at a particular angle, a line in a particular place.
+
+They identified two key cell types:
+
+- **Simple cells** act like local spatial filters. Each one watches a small patch of the world and fires when it sees a specific pattern there, such as an oriented edge.
+- **Complex cells** respond to the same pattern even when it shifts slightly. They tolerate small movements, caring about _what_ is present more than _exactly where_.
+
+<Mermaid
+  chart={`
+  graph LR;
+    V1S["V1 simple cells: edges"]-->V1C["V1 complex cells: shift-tolerant"];
+    V1C-->MID["Mid-level areas: shapes and parts"];
+    MID-->IT["Inferior temporal cortex: objects and faces"];
+`}
+/>
+
+This is the direct structural blueprint for a CNN. A convolutional filter is a simple cell, scanning the image and reporting where its preferred pattern appears. A pooling layer is a complex cell, summarizing a region so the answer survives small shifts. Biology solved this decades before engineering rediscovered it.
+
+## 4. Faces and Features: Measuring Parameters
+
+Masland's favorite example of the cortex's cleverness is face recognition. Here, too, the work is divided among specialized cells. Some fire for the pattern of two neighboring dots — a pair of eyes. Others fire for a nearby vertical line — a nose.
+
+"It has been proposed," Masland writes, "that what these cells are doing is measuring a selection of parameters ... to decide whether something is a face."
+
+The system is powerful but not foolproof, which is why we see faces in clouds, electrical outlets, and the front of cars. That tendency even has a name: **pareidolia**. The same feature-detector logic that makes us brilliant at spotting faces also makes us eager to find them where they are not.
+
+Deep CNNs learn precisely this kind of parameter-measuring. Early layers detect edges and dots; deeper layers assemble them into eyes, noses, wheels, and leaves.
+
+## 5. A Brief History of Convolutional Architectures
+
+The engineering of CNNs unfolded over decades, each step borrowing a little more from the biology:
+
+1. **Neocognitron (1980):** Kunihiko Fukushima, directly inspired by Hubel and Wiesel, introduced hierarchical receptive fields and pooling — the first true convolutional architecture.
+2. **LeNet-5 (1998):** Yann LeCun trained convolutional networks with gradient descent for handwritten digit recognition, establishing the classic `Convolution -> Pooling -> Fully Connected` pipeline.
+3. **AlexNet (2012):** Alex Krizhevsky and colleagues scaled deep CNNs onto GPUs and dominated the ImageNet benchmark, proving that depth plus data plus compute could conquer large-scale vision.
+
+## 6. The Convolution Operation and Feature Extraction
+
+At the heart of every CNN layer is the discrete convolution. A small learnable kernel $K$ slides across an input $X$, and at each position it multiplies and sums the overlapping values. For an output cell at $(i, j)$:
+
+$$
+S(i, j) = \sum_{m} \sum_{n} X(i + m, j + n) \, K(m, n)
+$$
+
+In practice a bias is added and a nonlinearity such as ReLU, $\sigma(x) = \max(0, x)$, is applied so the network can learn more than straight lines.
+
+Try it below. Each filter you select behaves like one of the retina's parallel streams, or one simple cell type, reporting on a single feature wherever it appears. Click any output cell to inspect the exact calculation.
+
+<CNNKernelVisualizer />
+
+Notice how the **edge** filter lights up where values change sharply, while the **blur** filter smooths everything. A real CNN does not use hand-written kernels like these. It learns them. Which brings us to the deepest idea of all.
+
+## 7. Learning to See: From Hebb to Backpropagation
+
+Vision is as much about remembering as it is about seeing. We learn to recognize objects, and that learning physically rewires the brain. When two neurons fire together repeatedly, the connection between them strengthens. Donald Hebb captured this in a rule now summarized as: "neurons that fire together wire together."
+
+These modifiable connections form **nerve nets**, and here the two disciplines Masland loved finally shake hands. Nerve nets are as central to neuroscience as they are to machine learning. A CNN is, in a very real sense, an artificial nerve net whose connections are tuned by backpropagation instead of biology.
+
+Masland frames this as an elegant evolutionary solution to a profound problem. How do you build a perception machine without knowing in advance what it will need to recognize across a lifetime? You cannot hard-code every object. Life's answer: build a _general_ pattern-recognition machine, then let experience tune it.
+
+That is exactly why we train CNNs rather than hand-design them. The architecture provides the structure — local filters, pooling, hierarchy — and learning fills in the details.
+
+## 8. From Edges to Objects to Understanding
+
+Stack these ideas and the full picture emerges. Early layers detect primitive edges and contrasts, just like the retina's streams and V1's simple cells. Middle layers combine them into textures, corners, and parts. Deep layers recognize whole objects — and, like the face cells Masland describes, measure combinations of parameters to decide what something is.
+
+Beyond object recognition lies the frontier Masland enters with honest caution: how perception shades into memory, into thinking, and perhaps into consciousness. We do not yet understand this well. But the path from a photon striking the retina to a recognized face is, in outline, the same path a CNN walks from pixels to prediction.
+
+## Conclusion
+
+Convolutional Neural Networks are one of the great cross-disciplinary triumphs of modern science. They translate the biological efficiency of the visual system — the retina's parallel streams, the cortex's simple and complex cells, the brain's self-wiring nerve nets — into a scalable mathematical architecture.
+
+Masland's lesson is the lesson of the whole field: the eye is not a camera, and a CNN is not a lookup table. Both are layered, learning machines that build understanding from light, one feature at a time.
+
+**Further reading:** This article follows the structure and spirit of _We Know It When We See It: What the Neurobiology of Vision Tells Us About How We Think_ by Richard Masland (Oneworld Publications). It is a warm, clear, start-to-finish tour of the neurobiology of vision, and the perfect companion to this tutorial.

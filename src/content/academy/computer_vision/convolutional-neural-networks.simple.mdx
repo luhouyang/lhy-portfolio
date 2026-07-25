@@ -1,0 +1,75 @@
+# Convolutional Neural Networks, Explained Simply
+
+<Sticker src="/assets/stickers/doguu.png" size={120} initialRotation={-15} />
+
+How does a computer look at a photo and say "that is a cat"? It does not see the whole picture at once. It works the way your eyes and brain do: it notices small details first, then builds them up into bigger ideas.
+
+That is the whole idea behind a Convolutional Neural Network, or CNN. And surprisingly, the best way to understand it is to understand your own eyes.
+
+## Your Eye Is Part of Your Brain
+
+Here is the surprise most people never learn. Your retina is not just a camera sensor. It is actually a piece of your brain that moved into your eye before you were born.
+
+That means your eye does a lot of thinking before it sends anything to the rest of your brain. It does not hand over a plain photograph. It hands over a set of reports, each one about a different feature of the scene.
+
+## Thirty Channels at Once
+
+Your eye splits the world into about thirty separate channels at the same time. One channel reports edges. Another reports motion. Another reports fine detail. None of them dominates; they all work together.
+
+<Mermaid
+  chart={`
+  graph LR;
+    Eye["Your eye"]-->|"splits the scene"| S1["Edge channel"];
+    Eye-->S2["Motion channel"];
+    Eye-->S3["Detail channel"];
+    S1-->Brain["Brain combines them"];
+    S2-->Brain;
+    S3-->Brain;
+`}
+/>
+
+A CNN works the same way. Instead of one filter, it runs many filters at once, and each one looks for a different feature. Those thirty biological channels are almost exactly what a convolutional layer does.
+
+## Try It: Slide a Filter Across a Grid
+
+Use the explorer below. Pick a filter, then click any cell in the output grid to see exactly which input numbers produced it.
+
+<CNNKernelVisualizer />
+
+Notice how the **edge** filter gives big numbers where values change suddenly, and the **blur** filter smooths everything out. Each filter is like one of your eye's channels, reporting on a single feature wherever it appears.
+
+## From Edges to Objects
+
+Deep inside the brain, and deep inside a CNN, features get combined step by step.
+
+<Mermaid
+  chart={`
+  graph LR;
+    E["Edges"]-->Sh["Shapes"];
+    Sh-->P["Parts"];
+    P-->O["Objects"];
+`}
+/>
+
+Early layers find simple things: edges, corners, and color patches. Middle layers combine those into shapes and textures. Deep layers recognize whole objects, like a leaf, a letter, or a face.
+
+Your brain even has cells that measure a few features to decide "is this a face?" Two dots for eyes, a vertical line for a nose. This system is so eager to find faces that we sometimes see them in clouds and electrical outlets. That tendency has a name: pareidolia. CNNs learn the same kind of feature-checking.
+
+## Learning by Wiring Together
+
+How does the brain learn to recognize things? There is a famous saying in neuroscience: "neurons that fire together wire together." When two brain cells activate together again and again, the link between them grows stronger.
+
+CNNs learn in a similar spirit. Instead of being told exactly what to look for, they adjust their own filters through practice, gradually teaching themselves to spot edges, then shapes, then whole objects.
+
+This is also a clever trick of evolution. How do you build a machine that can recognize things without knowing in advance what it will need to recognize across a lifetime? You build a general learning machine, and let experience tune it. That is exactly why we train CNNs rather than hand-program them.
+
+## Summary
+
+- Your retina is a piece of your brain, and it does a lot of pre-processing.
+- The eye splits the world into about thirty parallel channels, just like a CNN runs many filters at once.
+- Features build up step by step: edges, then shapes, then objects.
+- The brain and CNNs both learn by strengthening connections that fire together.
+
+A CNN is not a lookup table. It is a layered, learning machine that builds understanding from light, one feature at a time, much like your own visual system.
+
+**Want to go deeper?** Pick up _We Know It When We See It_ by Richard Masland. It is a warm, clear tour of the neurobiology of vision, and the perfect companion to this article.

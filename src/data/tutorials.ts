@@ -1,19 +1,10 @@
 import type { AcademyCatalogItem, TutorialMeta } from "../types";
 
 /**
- * This is the full Academy catalog list.
+ * Full Academy catalog list.
  *
- * You can insert section separators anywhere in this array
- * and they will render in the same order on the Academy page.
- *
- * Example section separator:
- *
- * {
- *   type: "section",
- *   id: "robotics",
- *   title: "Robotics",
- *   description: "Autonomous systems, perception, and control."
- * }
+ * Insert section separators anywhere in this array and they will
+ * render in the same order on the Academy page.
  */
 export const academyCatalog: AcademyCatalogItem[] = [
   {
@@ -31,6 +22,9 @@ export const academyCatalog: AcademyCatalogItem[] = [
     tags: ["Reinforcement Learning", "Chaos", "WebGL"],
     description:
       "Exploring how autonomous agents navigate chaotic environments using PPO, strange attractors, and swarm mechanics.",
+    books: [
+      
+    ],
   },
 
   {
@@ -43,13 +37,29 @@ export const academyCatalog: AcademyCatalogItem[] = [
 
   {
     type: "tutorial",
-    slug: "convolutional-neural-networks",
+    slug: "computer_vision/convolutional-neural-networks",
     title:
       "Convolutional Neural Networks: From Biological Visual Cortex to Deep Learning",
     date: "2026-07-10",
     tags: ["AI/ML", "Computer Vision", "Deep Learning"],
     description:
       "Exploring how modern computer vision models mirror the biological visual cortex, tracing CNN history from the Neocognitron to deep architectures.",
+    books: [
+      {
+        title: "Deep Learning",
+        author: "Ian Goodfellow, Yoshua Bengio, Aaron Courville",
+        cover: "/assets/books/deep-learning.jpg",
+        url: "https://www.deeplearningbook.org/",
+        note: "The standard reference for deep learning fundamentals.",
+      },
+      {
+        title: "We Know It When We See It",
+        author: "Richard Masland",
+        cover: "/assets/books/we-know-it-when-we-see-it.jpg",
+        url: "https://inquisitivebiologist.com/2021/04/20/book-review-we-know-it-when-we-see-it-what-the-neurobiology-of-vision-tells-us-about-how-we-think/",
+        note: "Fun and approchable read about human vision and how it inspires computer vision systems.",
+      },
+    ],
   },
 
   {
@@ -62,18 +72,26 @@ export const academyCatalog: AcademyCatalogItem[] = [
 
   {
     type: "tutorial",
-    slug: "quantum-computing-basics",
+    slug: "quantum_computing/quantum-computing-basics",
     title: "Quantum Computing Basics: Superposition, Entanglement, and Qubits",
     date: "2026-07-15",
     tags: ["Quantum", "Computing", "Physics"],
     description:
       "An introduction to quantum mechanics principles including qubits, superposition, entanglement, and quantum logic gates.",
+    books: [
+      {
+        title: "Quantum Computing for Everyone",
+        author: "Chris Bernhardt",
+        cover: "/assets/books/quantum-computing-for-everyone.webp",
+        url: "https://github.com/shyamsantoki/Qubit_Quantuam-Computing_Notes/blob/main/Quantum%20computing%20for%20everyone%20by%20Bernhardt%2C%20Chris%20(z-lib.org).pdf",
+        note: "Great beginner-friendly introduction to quantum computing.",
+      },
+    ],
   },
 ];
 
 /**
  * Backwards-compatible export containing only actual tutorials.
- * Useful if other parts of the app expect only TutorialMeta items.
  */
 export const tutorials: TutorialMeta[] = academyCatalog.filter(
   (item): item is TutorialMeta => item.type !== "section"

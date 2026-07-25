@@ -31,7 +31,6 @@ export function useWorksFilter(works: Work[] = portfolioWorks) {
 
       if (withoutAll.includes(tag)) {
         const nextTags = withoutAll.filter((activeTag) => activeTag !== tag);
-
         return nextTags.length === 0 ? ["All"] : nextTags;
       }
 
@@ -46,9 +45,7 @@ export function useWorksFilter(works: Work[] = portfolioWorks) {
       return works;
     }
 
-    const workTags = activeTags.filter(
-      (tag): tag is WorkTag => tag !== "All"
-    );
+    const workTags = activeTags.filter((tag): tag is WorkTag => tag !== "All");
 
     return works.filter((work) =>
       workTags.every((tag) => work.tags.includes(tag))

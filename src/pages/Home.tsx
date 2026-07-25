@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, ArrowRight, MapPin, Calendar, Award, Terminal, Database, Code, Download } from "lucide-react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 
+// Timeline Data integrating resume journey
 type TimelineEvent = {
   date: string;
   title: string;
@@ -11,7 +12,6 @@ type TimelineEvent = {
   highlight?: boolean;
 };
 
-// Timeline Data integrating resume journey
 const timelineEvents: TimelineEvent[] = [
   {
     date: "Jun 2026",
@@ -65,7 +65,7 @@ const timelineEvents: TimelineEvent[] = [
   {
     date: "May 2024",
     title: "Head of PR, Campus Venture (CAVE)",
-    location: "Universiti Teknologi PETRONAS",
+    location: "UTP",
     description:
       "Managed public relations and communications, liaising with VIPs, performers, and over 160 school visitors while leading a team of 4 for social media outreach.",
     tags: ["Leadership", "Public Relations", "Event Management"],
@@ -91,7 +91,7 @@ const skillsData = [
         className="text-[#c2410c]"
       />
     ),
-    items: ["Python", "Java", "C++", "SQL", "Flutter", "React", "Angular"], //[cite: 3]
+    items: ["Python", "Java", "C++", "SQL", "Flutter", "React", "Angular"],
   },
   {
     category: "Cloud & Environments",
@@ -101,7 +101,7 @@ const skillsData = [
         className="text-[#c2410c]"
       />
     ),
-    items: ["Google Cloud Platform (GCP)", "AWS", "Microsoft Azure", "Git & GitHub", "Unity 3D"], //[cite: 3]
+    items: ["Google Cloud Platform (GCP)", "AWS", "Microsoft Azure", "Git & GitHub", "Unity 3D"],
   },
   {
     category: "Core Competencies",
@@ -111,18 +111,18 @@ const skillsData = [
         className="text-[#c2410c]"
       />
     ),
-    items: ["AI/ML Models", "Computer Vision", "Data Analytics", "OOP", "App Development"], //[cite: 3]
+    items: ["AI/ML Models", "Computer Vision", "Data Analytics", "OOP", "App Development"],
   },
 ];
 
 const certificationsData = [
-  "Customizing your model with TensorFlow 2 (Imperial College London)", //[cite: 3]
-  "Google Data Analytics Professional Certificate", //[cite: 3]
-  "Introduction to Large Language Models (Google)", //[cite: 3]
-  "React Basics & Intro to Front End Development (Meta)", //[cite: 3]
-  "Introduction to Microsoft Azure Cloud Services", //[cite: 3]
-  "AWS Cloud Foundations", //[cite: 3]
-  "Git and GitHub Essentials (IBM)", //[cite: 3]
+  "Customizing your model with TensorFlow 2 (Imperial College London)",
+  "Google Data Analytics Professional Certificate",
+  "Introduction to Large Language Models (Google)",
+  "React Basics & Intro to Front End Development (Meta)",
+  "Introduction to Microsoft Azure Cloud Services",
+  "AWS Cloud Foundations",
+  "Git and GitHub Essentials (IBM)",
 ];
 
 function TimelineItem({ event, index }: { event: TimelineEvent; index: number }) {
@@ -203,6 +203,7 @@ export default function Home() {
           intelligent applications, train computer vision models, and lead technical workshops. When I'm not developing mobile
           architectures or analyzing data, you can find me playing the piano.
         </p>
+
         <div className="flex flex-wrap gap-4 mt-4">
           <a
             href="mailto:luhouyang@gmail.com"
@@ -244,12 +245,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. CREDENTIALS & SKILLS (NEW SECTION) */}
+      {/* 3. CREDENTIALS & SKILLS */}
       <section className="flex flex-col gap-8">
         <h3 className="text-2xl font-semibold border-b border-[#e7e5e4] dark:border-[#44403c] pb-4 text-[#292524] dark:text-[#fafaf9]">
           Skills & Certifications
         </h3>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-4">
           {/* Technical Skills Map */}
           <div className="flex flex-col gap-6">
@@ -335,7 +335,6 @@ export default function Home() {
       <div className="wrapper mt-4 mb-16">
         <h2 className="text-3xl font-bold mb-8 text-[#292524] dark:text-[#fafaf9]">Ongoing Projects</h2>
         <hr className="border-[#e7e5e4] dark:border-[#44403c] mb-8" />
-
         <div className="flex flex-col gap-10">
           <div
             className="flex flex-col md:flex-row gap-8"

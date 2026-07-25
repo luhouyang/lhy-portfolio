@@ -8,11 +8,16 @@ type WorkFilter = WorkTag | "All";
 type WorkItem = (typeof portfolioWorks)[number];
 
 const langColors: Record<string, string> = {
-  Python: "#3572A5",
   Dart: "#00B4AB",
-  "C++": "#f34b7d",
+  Python: "#3572A5",
+  Firebase: "#FFCA28",
+  Unity: "#222c37",
+  "C#": "#178600",
+  Android: "#3DDC84",
   TypeScript: "#3178c6",
   JavaScript: "#f1e05a",
+  "C++": "#f34b7d",
+  Java: "#b07219",
 };
 
 export default function Works() {
@@ -43,12 +48,10 @@ export default function Works() {
       const aTime = getTimestamp(a.date);
       const bTime = getTimestamp(b.date);
 
-      // Latest first
       if (bTime !== aTime) {
         return bTime - aTime;
       }
 
-      // Fallback for same-date items
       return b.date.trim().localeCompare(a.date.trim());
     });
   }, []);
@@ -62,6 +65,10 @@ export default function Works() {
 
     return sortedWorks.filter((work) => work.tags.includes(selectedTag));
   }, [sortedWorks, filter]);
+
+  const getLanguageColor = (language: string): string => {
+    return langColors[language] ?? "#a8a29e";
+  };
 
   // Helper to render a cluster of stickers on a specific side
   const renderStickerCluster = (work: WorkItem, side: "left" | "right") => {
@@ -129,8 +136,8 @@ export default function Works() {
             {/* LEFT STICKER CLUSTER */}
             {renderStickerCluster(work, "left")}
 
-            {/* PROJECT CARD */}
-            <div className="archival-card flex flex-col group w-full max-w-2xl relative z-10">
+            {/* THE ARCHIVAL CARD */}
+            <div className="archival-card flex flex-col group w-full max-w-2xl relative z-10 transition-transform duration-300 hover:-translate-y-0.5">
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-xl font-medium text-[#292524] dark:text-[#fafaf9] group-hover:text-[#c2410c] transition-colors">
                   {work.title}
@@ -145,27 +152,18 @@ export default function Works() {
                 {work.description}
               </p>
 
-              <div className="flex justify-between items-center mt-auto pt-4 border-t border-[#e7e5e4] dark:border-[#44403c]">
-                <div className="flex items-center gap-4 text-xs font-mono text-[#78716c] dark:text-[#a8a29e]">
-                  {work.tags.includes("Flutter") && (
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: langColors["Dart"] }}
-                      ></span>
-                      Dart
-                    </span>
-                  )}
-
-                  {work.tags.includes("AI/ML") && (
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: langColors["Python"] }}
-                      ></span>
-                      Python
-                    </span>
-                  )}
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mt-auto pt-4 border-t border-[#e7e5e4] dark:border-[#44403c]">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-mono text-[#78716c] dark:text-[#a8a29e]">
+                  {work.languages && work.languages.length > 0 &&
+                    work.languages.map((language) => (
+                      <span key={language} className="flex items-center gap-1.5">
+                        <span
+                          className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20"
+                          style={{ backgroundColor: getLanguageColor(language) }}
+                        ></span>
+                        {language}
+                      </span>
+                    ))}
 
                   {work.githubUrl && work.stars !== undefined && (
                     <span className="flex items-center gap-1">

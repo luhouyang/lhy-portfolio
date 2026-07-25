@@ -1,13 +1,13 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Layout/Navbar';
-import Home from './pages/Home';
-import Works from './pages/Works';
-import AcademyCatalog from './pages/AcademyCatalog';
-import TutorialLayout from './pages/TutorialLayout';
-import { useParallax } from './hooks/useParallax'; 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Layout/Navbar";
+import Home from "./pages/Home";
+import Works from "./pages/Works";
+import AcademyCatalog from "./pages/AcademyCatalog";
+import TutorialLayout from "./pages/TutorialLayout";
+import { useParallax } from "./hooks/useParallax";
 
 export default function App() {
-  useParallax(); 
+  useParallax();
 
   return (
     <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
@@ -15,10 +15,22 @@ export default function App() {
         <Navbar />
         <main className="flex-grow pt-24 pb-16 px-6 max-w-5xl mx-auto w-full">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/works" element={<Works />} />
-            <Route path="/academy" element={<AcademyCatalog />} />
-            <Route path="/academy/:slug" element={<TutorialLayout />} />
+            <Route
+              path="/"
+              element={<Home />}
+            />
+            <Route
+              path="/works"
+              element={<Works />}
+            />
+            <Route
+              path="/academy"
+              element={<AcademyCatalog />}
+            />
+            <Route
+              path="/academy/*"
+              element={<TutorialLayout />}
+            />
           </Routes>
         </main>
       </div>

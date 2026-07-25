@@ -9,7 +9,6 @@ export type WorkTag =
   | "Algorithm"
   | "TensorFlow"
   | "Scikit-Learn"
-  
   // Development & Tech Stack
   | "Flutter"
   | "React"
@@ -19,23 +18,21 @@ export type WorkTag =
   | "Cybersecurity"
   | "Automation"
   | "Quantum"
-  
   // Domains & Mediums
   | "App"
   | "Service"
   | "Game"
   | "Mixed Reality"
   | "AR"
+  | "Android"
   | "Hardware"
   | "Robotics"
-  
   // Fields & Industries
   | "Research"
   | "Finance"
   | "Education"
   | "Environment"
   | "Sustainability"
-  
   // Community, Events & Extracurriculars
   | "Community"
   | "Event"
@@ -58,27 +55,28 @@ export interface WorkSticker {
   offsetY?: number;
 }
 
-export type Work = {
+export interface Work {
   id: string;
-  category: string;
+  category: WorkCategory;
   title: string;
-  tags: string[];
+  tags: WorkTag[];
   languages?: string[];
   date: string;
   description: string;
-  githubUrl: string;
-  stars: number;
-  forks: number;
-  stickers?: {
-    src: string;
-    position: "left" | "right";
-    rotation?: number;
-    size?: number;
-    offsetX?: number;
-    offsetY?: number;
-    alt?: string;
-  }[];
-};
+  doi?: string;
+  githubUrl?: string;
+  stars?: number;
+  forks?: number;
+  stickers?: WorkSticker[];
+}
+
+export interface RecommendedBook {
+  title: string;
+  author?: string;
+  cover: string;
+  url: string;
+  note?: string;
+}
 
 export interface TutorialMeta {
   type?: "tutorial";
@@ -87,6 +85,7 @@ export interface TutorialMeta {
   date: string;
   tags: string[];
   description: string;
+  books?: RecommendedBook[];
 }
 
 export interface TutorialSectionSeparator {
