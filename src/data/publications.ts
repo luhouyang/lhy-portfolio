@@ -16,14 +16,14 @@ export const publicationsData: PublicationSection[] = [
     ]
   },
   {
-    year: 2024,
+    year: 2026,
     items: [
       {
-        id: "lu2024investigating",
-        title: "Investigating Accuracy and Precision in Augmented Reality Eye Gaze Tracking -- A Systematic Experimental Study",
+        id: "lu2026investigating",
+        title: "Investigating Accuracy and Precision in Augmented Reality Eye Gaze Tracking: A Systematic Experimental Study",
         authors: ["Hou Yang Lu", "Haruhiro Fujita", "Kwang Hooi Yew"],
         booktitle: "Abstract Booklet of the World Engineering, Science & Technology Congress (ESTCON)",
-        year: 2024,
+        year: 2026,
         note: "Track 2: Intelligent Communities and Distributed Living Systems (ICSL), Paper ID 378, Publisher: Universiti Teknologi PETRONAS"
       }
     ]
