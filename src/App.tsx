@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Works from "./pages/Works";
 import AcademyCatalog from "./pages/AcademyCatalog";
 import TutorialLayout from "./pages/TutorialLayout";
+import Publications from "./pages/Publications";
 import { useParallax } from "./hooks/useParallax";
 
 export default function App() {
@@ -18,6 +19,10 @@ export default function App() {
             <Route
               path="/"
               element={<Home />}
+            />
+            <Route
+              path="/publications"
+              element={<Publications />}
             />
             <Route
               path="/works"

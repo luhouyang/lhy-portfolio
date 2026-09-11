@@ -96,3 +96,18 @@ export interface TutorialSectionSeparator {
 }
 
 export type AcademyCatalogItem = TutorialMeta | TutorialSectionSeparator;
+
+export interface Publication {
+  id: string;
+  title: string;
+  authors: string[];
+  booktitle: string;
+  year: number;
+  url?: string;
+  note?: string;
+}
+
+export interface PublicationSection {
+  year: number;
+  items: Publication[];
+}

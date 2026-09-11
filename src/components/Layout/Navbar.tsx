@@ -1,12 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
-import { BookOpen, FolderGit2, Home } from "lucide-react";
+import { BookOpen, FolderGit2, Home, FileText } from "lucide-react";
 
 export default function Navbar() {
   const location = useLocation();
 
   const links = [
     { path: "/", label: "Home", icon: Home },
+    { path: "/publications", label: "Publications", icon: FileText },
     { path: "/works", label: "Works", icon: FolderGit2 },
     { path: "/academy", label: "Academy", icon: BookOpen },
   ];
