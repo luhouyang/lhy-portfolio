@@ -2,7 +2,7 @@ import type { PublicationSection } from "../types";
 
 export const publicationsData: PublicationSection[] = [
   {
-    year: 2026,
+    category: "Cultural",
     items: [
       {
         id: "fujita2026deep",
@@ -16,7 +16,7 @@ export const publicationsData: PublicationSection[] = [
     ]
   },
   {
-    year: 2026,
+    category: "Extended Reality",
     items: [
       {
         id: "lu2026investigating",

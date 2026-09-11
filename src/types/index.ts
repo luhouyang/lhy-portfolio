@@ -108,6 +108,6 @@ export interface Publication {
 }
 
 export interface PublicationSection {
-  year: number;
+  category: string;
   items: Publication[];
 }

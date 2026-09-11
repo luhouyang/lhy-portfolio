@@ -13,9 +13,9 @@ export default function Publications() {
 
       <div className="flex flex-col gap-12">
         {publicationsData.map((section) => (
-          <section key={section.year} className="flex flex-col gap-6">
+          <section key={section.category} className="flex flex-col gap-6">
             <h2 className="text-2xl font-semibold border-b border-[#e7e5e4] dark:border-[#44403c] pb-2 text-[#292524] dark:text-[#fafaf9]">
-              {section.year}
+              {section.category}
             </h2>
             <div className="flex flex-col gap-6">
               {section.items.map((pub) => (
