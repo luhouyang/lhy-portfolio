@@ -24,7 +24,7 @@ export const publicationsData: PublicationSection[] = [
         authors: ["Hou Yang Lu", "Haruhiro Fujita", "Kwang Hooi Yew"],
         booktitle: "Abstract Booklet of the World Engineering, Science & Technology Congress (ESTCON)",
         year: 2026,
-        url: "https://drive.google.com/file/d/1zzJoWk24AHgx91u85-jqSTfC2skQeY_G/view?usp=sharing"
+        url: "https://drive.google.com/file/d/1zzJoWk24AHgx91u85-jqSTfC2skQeY_G/view?usp=sharing",
         note: "Track 2: Intelligent Communities and Distributed Living Systems (ICSL), Paper ID 378, Publisher: Universiti Teknologi PETRONAS"
       }
     ]
