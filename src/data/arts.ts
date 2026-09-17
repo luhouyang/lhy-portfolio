@@ -6,6 +6,16 @@
 //  - "row" / "column" = invisible containers for freeform composition
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Helpers for filtering / rearranging the feed
+// ---------------------------------------------------------------------------
+
+/** Walks the layout tree and returns every "piece" node in authored order. */
+export function collectPieces(node: ArtNode): ArtNode[] {
+  if (node.type === "piece") return [node];
+  return (node.children ?? []).flatMap(collectPieces);
+}
+
 export type ArtCategory = "Music" | "Photography" | "Artwork";
 
 export interface ArtNode {
