@@ -5,6 +5,7 @@ import Works from "./pages/Works";
 import AcademyCatalog from "./pages/AcademyCatalog";
 import TutorialLayout from "./pages/TutorialLayout";
 import Publications from "./pages/Publications";
+import Arts from "./pages/Arts";
 import { useParallax } from "./hooks/useParallax";
 
 export default function App() {
@@ -16,26 +17,12 @@ export default function App() {
         <Navbar />
         <main className="flex-grow pt-24 pb-16 px-6 max-w-5xl mx-auto w-full">
           <Routes>
-            <Route
-              path="/"
-              element={<Home />}
-            />
-            <Route
-              path="/publications"
-              element={<Publications />}
-            />
-            <Route
-              path="/works"
-              element={<Works />}
-            />
-            <Route
-              path="/academy"
-              element={<AcademyCatalog />}
-            />
-            <Route
-              path="/academy/*"
-              element={<TutorialLayout />}
-            />
+            <Route path="/" element={<Home />} />
+            <Route path="/publications" element={<Publications />} />
+            <Route path="/works" element={<Works />} />
+            <Route path="/arts" element={<Arts />} /> {/* Added Route */}
+            <Route path="/academy" element={<AcademyCatalog />} />
+            <Route path="/academy/*" element={<TutorialLayout />} />
           </Routes>
         </main>
       </div>

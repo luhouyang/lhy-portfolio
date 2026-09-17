@@ -1,8 +1,21 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, ArrowRight, MapPin, Calendar, Award, Terminal, Database, Code, Download } from "lucide-react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
+import { useState, useEffect, useRef } from "react";
+import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 
-// Timeline Data integrating resume journey
+// TopoJSON for the clean stylized world map
+const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
+
+// --- Timeline distance scaling config ---
+const TIMELINE_PX_PER_MONTH = 8;   // px of vertical distance per month spent
+const TIMELINE_MIN_GAP_PX = 64;    // shortest allowed gap between nodes
+const TIMELINE_MAX_GAP_PX = 196;   // hard limit — no gap ever exceeds this
+
+function timelineGapPx(months: number): number {
+  return Math.max(TIMELINE_MIN_GAP_PX, Math.min(TIMELINE_MAX_GAP_PX, months * TIMELINE_PX_PER_MONTH));
+}
+
 type TimelineEvent = {
   date: string;
   title: string;
@@ -10,32 +23,37 @@ type TimelineEvent = {
   description: string;
   tags: string[];
   highlight?: boolean;
+  durationMonths: number;
 };
 
 const timelineEvents: TimelineEvent[] = [
   {
-    date: "Jun 2026",
-    title: "AWS x UTP GenAI Hackathon Champion",
-    location: "Chancellor Hall, UTP",
-    description:
-      "Won 1st Place (RM 1,200) at the AWS x UTP GenAI Hackathon 2026, building innovative generative AI applications with my team under tight time constraints.",
-    tags: ["Hackathon", "AI/ML", "Competition"],
+    date: "June 2004 - July 2022",
+    title: "Sabahan",
+    location: "Kota Kinabalu, Sabah",
+    description: "Enjoying the mountain and beaches of Sabah",
+    tags: ["Gunung Kinabalu", "Sang Yuk Mee"],
+    highlight: true,
+    durationMonths: 217,
   },
   {
-    date: "Mar 2026",
-    title: "Codexia Competition Champion",
-    location: "UTP Computing Department",
-    description:
-      "Achieved 1st place and won RM 2,000 at the Codexia Competition, collaborating with teammates to deliver an exceptional software solution.",
-    tags: ["Hackathon", "Competition", "Software Development"],
+    date: "July 2022 - May 2023",
+    title: "Physical Sciences",
+    location: "Kolej Matrikulasi Labuan (KML)",
+    description: "Gratuated with 4.00 CGPA. Developed an interest in programming by joining hackathons.",
+    tags: ["Tax Free Chocolate", "UK IYKYK"],
+    highlight: true,
+    durationMonths: 10,
   },
   {
-    date: "Feb 2026",
-    title: "Research Sharing & AI Workshop Speaker",
-    location: "UTP",
+    date: "Sept 2023 - May 2025",
+    title: "BSc Computer Science (Hons) & GDSC Mobile Development Lead",
+    location: "Universiti Teknologi PETRONAS",
     description:
-      "Co-hosted an internship sharing session presenting insights from my NUIS Japan research internship, and delivered the beginner-friendly 'AI Unlocked!' workshop introducing AI and Small Language Models.",
-    tags: ["Research", "Mixed Reality", "AI/ML", "Workshop"],
+      "Maintaining a 3.90 CGPA with 4-time Dean's List honors. Serving as Mobile Development Lead for GDSC-UTP, conducting workshops on Flutter, Firebase, TensorFlow, and GitHub.",
+    tags: ["Computer Science", "GDSC Lead", "Dean's List"],
+    highlight: true,
+    durationMonths: 20,
   },
   {
     date: "May 2025 - Dec 2025",
@@ -45,41 +63,27 @@ const timelineEvents: TimelineEvent[] = [
       "Developed Mixed Reality experiences for Microsoft HoloLens 2 using Unity 3D. Collected and analyzed multimodal eye-tracking, voice, and emotion data from 300+ students, and co-authored research findings.",
     tags: ["Mixed Reality", "Unity 3D", "AI/ML", "Research"],
     highlight: true,
+    durationMonths: 7,
   },
   {
-    date: "Jul 2024",
-    title: "E3S2 Hackathon Champion",
+    date: "Dec 2025 - Present",
+    title: "BSc Computer Science (Hons)",
     location: "Universiti Teknologi PETRONAS",
     description:
-      "Achieved 1st place and won a RM 1,500 prize by collaborating with a team of tech enthusiasts to build an innovative solution under strict time constraints.",
-    tags: ["Hackathon", "Competition", "Software Development"],
-  },
-  {
-    date: "May 2024 - Jun 2024",
-    title: "Head Trainer & Technical Speaker",
-    location: "UTP GDSC & Syntech Club",
-    description:
-      "Prepared modules and delivered multiple technical workshops, including a 3-Day Flutter Firebase Bootcamp and a TensorFlow Computer Vision session for OCR modeling.",
-    tags: ["Flutter", "Firebase", "TensorFlow", "Workshop"],
-  },
-  {
-    date: "May 2024",
-    title: "Head of PR, Campus Venture (CAVE)",
-    location: "UTP",
-    description:
-      "Managed public relations and communications, liaising with VIPs, performers, and over 160 school visitors while leading a team of 4 for social media outreach.",
-    tags: ["Leadership", "Public Relations", "Event Management"],
-  },
-  {
-    date: "Sept 2023 - Present",
-    title: "BSc Computer Science (Hons) & GDSC Mobile Development Lead",
-    location: "Universiti Teknologi PETRONAS",
-    description:
-      "Maintaining a 3.90 CGPA with 4-time Dean's List honors. Serving as Mobile Development Lead for GDSC-UTP, conducting workshops on Flutter, Firebase, TensorFlow, and GitHub.",
-    tags: ["Computer Science", "GDSC Lead", "Dean's List"],
+      "Final year in UTP, with a focus on conducting research on Extended Reality (XR), Digital Twin, Fundamental AI, Cultural, Cognition.",
+    tags: ["Computer Science", "Research", "XR", "AI/ML"],
     highlight: true,
+    durationMonths: 10,
   },
 ];
+
+// Map coordinates + mercator scale (zoom) for each timeline location
+const locationCoordinates: Record<string, { lat: number; lng: number; scale: number }> = {
+  "Kota Kinabalu, Sabah": { lat: 5.9804, lng: 116.0735, scale: 1300 },
+  "Kolej Matrikulasi Labuan (KML)": { lat: 5.2831, lng: 115.2308, scale: 1400 },
+  "Universiti Teknologi PETRONAS": { lat: 4.386, lng: 100.979, scale: 1500 },
+  "NUIS, Japan": { lat: 37.8465, lng: 138.9669, scale: 1100 },
+};
 
 // Skills & Credentials Data
 const skillsData = [
@@ -125,32 +129,122 @@ const certificationsData = [
   "Git and GitHub Essentials (IBM)",
 ];
 
-function TimelineItem({ event, index }: { event: TimelineEvent; index: number }) {
+// --- Flat Square White Map (no globe, no mask) with smooth pan/zoom ---
+function FlatMap({ activeLocation }: { activeLocation: string }) {
+  const target = locationCoordinates[activeLocation] || { lat: 4.2105, lng: 101.9758, scale: 700 };
+  const targetCenter: [number, number] = [target.lng, target.lat];
+  const targetScale = target.scale;
+
+  const [view, setView] = useState<{ center: [number, number]; scale: number }>({
+    center: targetCenter,
+    scale: targetScale,
+  });
+  const viewRef = useRef(view);
+
+  // Ref-based rAF loop: guaranteed to re-trigger on every target change
+  useEffect(() => {
+    let frameId: number;
+    const step = () => {
+      const cur = viewRef.current;
+      const dx = targetCenter[0] - cur.center[0];
+      const dy = targetCenter[1] - cur.center[1];
+      const ds = targetScale - cur.scale;
+
+      if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01 && Math.abs(ds) < 0.5) {
+        viewRef.current = { center: targetCenter, scale: targetScale };
+        setView(viewRef.current);
+        return; // stop loop
+      }
+
+      const next = {
+        center: [cur.center[0] + dx * 0.08, cur.center[1] + dy * 0.08] as [number, number],
+        scale: cur.scale + ds * 0.08,
+      };
+      viewRef.current = next;
+      setView(next);
+      frameId = requestAnimationFrame(step);
+    };
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetCenter[0], targetCenter[1], targetScale]);
+
+  return (
+    <div className="w-full h-full relative bg-[#d6d3d1] overflow-hidden">
+      <ComposableMap
+        projection="geoMercator"
+        projectionConfig={{ center: view.center, scale: view.scale }}
+        width={800}
+        height={800}
+        className="w-full h-full"
+      >
+        <Geographies geography={geoUrl}>
+          {({ geographies }) =>
+            geographies.map((geo) => (
+              <Geography
+                key={geo.rsmKey}
+                geography={geo}
+                fill="#ffffff"
+                stroke="#1c1917"
+                strokeWidth={0.75}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                style={{ outline: "none" }}
+              />
+            ))
+          }
+        </Geographies>
+
+        {/* Active location marker */}
+        <Marker coordinates={targetCenter}>
+          <circle
+            r={14}
+            fill="#c2410c"
+            opacity={0.25}
+            className="animate-pulse"
+          />
+          <circle
+            r={5}
+            fill="#c2410c"
+            stroke="#ffffff"
+            strokeWidth={1.5}
+          />
+        </Marker>
+      </ComposableMap>
+    </div>
+  );
+}
+
+// --- Timeline Item ---
+function TimelineItem({ event, index, isActive }: { event: TimelineEvent; index: number; isActive: boolean }) {
   const { ref, isVisible } = useScrollReveal<HTMLDivElement>();
+  const isLast = index === timelineEvents.length - 1;
+  const gapPx = timelineGapPx(event.durationMonths);
 
   return (
     <div
       ref={ref}
-      className={`flex gap-6 md:gap-10 transition-all duration-700 ease-out ${
+      className={`flex gap-6 md:gap-8 transition-all duration-700 ease-out py-4 ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-      }`}
-      style={{ transitionDelay: `${index * 150}ms` }}
+      } ${isActive ? "scale-100 opacity-100" : "scale-[0.96] opacity-30"}`}
     >
       {/* The Line & Dot */}
       <div className="flex flex-col items-center">
         <div
-          className={`w-4 h-4 rounded-full z-10 border-2 border-[#fdfbf7] dark:border-[#1c1917] transition-all ${
-            event.highlight
-              ? "bg-[#c2410c] shadow-[0_0_14px_rgba(194,65,12,0.55)] ring-4 ring-[#c2410c]/10"
-              : "bg-[#d6d3d1] dark:bg-[#57534e]"
+          className={`w-4 h-4 rounded-full z-10 border-2 border-[#fdfbf7] dark:border-[#1c1917] transition-all duration-500 ${
+            isActive
+              ? "bg-[#c2410c] shadow-[0_0_14px_rgba(194,65,12,0.8)] ring-4 ring-[#c2410c]/20"
+              : event.highlight
+              ? "bg-[#d6d3d1] dark:bg-[#57534e]"
+              : "bg-[#e7e5e4] dark:bg-[#44403c]"
           }`}
         />
-
-        {index < timelineEvents.length - 1 && <div className="w-0.5 flex-grow bg-[#e7e5e4] dark:bg-[#44403c] mt-2" />}
+        {/* flex-grow makes the line stretch to fill the scaled gap */}
+        {!isLast && <div className="w-0.5 flex-grow bg-[#e7e5e4] dark:bg-[#44403c] mt-2 min-h-[40px]" />}
       </div>
 
-      {/* The Content */}
-      <div className="pb-12 max-w-xl">
+      {/* The Content — bottom padding now scales with time spent (was pb-12) */}
+      <div className="max-w-xl" style={{ paddingBottom: isLast ? 24 : gapPx }}>
         <div className="flex flex-wrap items-center gap-3 mb-2 text-sm font-mono text-[#78716c] dark:text-[#a8a29e]">
           <span className="flex items-center gap-1">
             <Calendar size={14} /> {event.date}
@@ -159,23 +253,19 @@ function TimelineItem({ event, index }: { event: TimelineEvent; index: number })
             <MapPin size={14} /> {event.location}
           </span>
         </div>
-
         <h3
           className={`text-xl font-bold mb-2 flex flex-wrap items-center gap-2 ${
             event.highlight ? "text-[#c2410c] dark:text-[#fb923c]" : "text-[#292524] dark:text-[#fafaf9]"
           }`}
         >
           {event.title}
-
           {event.highlight && (
             <span className="inline-flex items-center rounded-full border border-[#c2410c]/30 bg-[#c2410c]/10 px-2 py-0.5 text-xs font-mono text-[#c2410c] dark:text-[#fb923c]">
               Key Milestone
             </span>
           )}
         </h3>
-
         <p className="text-[#44403c] dark:text-[#d6d3d1] leading-relaxed mb-4">{event.description}</p>
-
         <div className="flex flex-wrap gap-2">
           {event.tags.map((tag) => (
             <span
@@ -192,8 +282,40 @@ function TimelineItem({ event, index }: { event: TimelineEvent; index: number })
 }
 
 export default function Home() {
+  const [activeTimelineIndex, setActiveTimelineIndex] = useState(0);
+
+  // Live rect-based center detection: never goes stale, never skips, always re-fires
+  const handleTimelineScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const containerRect = container.getBoundingClientRect();
+    const centerLine = containerRect.top + containerRect.height / 2;
+
+    const nodes = Array.from(container.querySelectorAll(".timeline-node")) as HTMLElement[];
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    nodes.forEach((node, index) => {
+      const rect = node.getBoundingClientRect();
+      const nodeCenter = rect.top + rect.height / 2;
+      const distance = Math.abs(centerLine - nodeCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    if (closestIndex !== activeTimelineIndex) {
+      setActiveTimelineIndex(closestIndex);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-24">
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
+
       {/* 1. HERO REGION */}
       <section className="flex flex-col gap-6 max-w-3xl">
         <h1 className="text-4xl md:text-6xl font-bold text-[#292524] dark:text-[#fafaf9] tracking-tight">Lu Hou Yang</h1>
@@ -203,7 +325,6 @@ export default function Home() {
           intelligent applications, train computer vision models, and lead technical workshops. When I'm not developing mobile
           architectures or analyzing data, you can find me playing the piano.
         </p>
-
         <div className="flex flex-wrap gap-4 mt-4">
           <a
             href="mailto:luhouyang@gmail.com"
@@ -211,7 +332,6 @@ export default function Home() {
           >
             <Mail size={18} /> Contact
           </a>
-
           <a
             href="/assets/resume/lu-hou-yang-resume.pdf"
             download="Lu_Hou_Yang_Resume.pdf"
@@ -219,7 +339,6 @@ export default function Home() {
           >
             <Download size={16} /> Download Resume
           </a>
-
           <Link
             to="/works"
             className="px-6 py-2 bg-[#f5f5f4] dark:bg-[#292524] text-[#292524] dark:text-[#d6d3d1] border border-[#e7e5e4] dark:border-[#44403c] rounded-lg hover:border-[#c2410c] hover:text-[#c2410c] transition-colors font-medium flex items-center gap-2"
@@ -229,19 +348,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. INTERACTIVE TIMELINE */}
+      {/* 2. INTERACTIVE TIMELINE & SQUARE WHITE MAP */}
       <section className="flex flex-col gap-8">
         <h3 className="text-2xl font-semibold border-b border-[#e7e5e4] dark:border-[#44403c] pb-4 text-[#292524] dark:text-[#fafaf9]">
           Experience & Education
         </h3>
-        <div className="relative mt-4">
-          {timelineEvents.map((event, index) => (
-            <TimelineItem
-              key={index}
-              event={event}
-              index={index}
-            />
-          ))}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[550px] mt-4 relative">
+          {/* Scrollable Timeline */}
+          <div
+            onScroll={handleTimelineScroll}
+            className="overflow-y-auto pl-8 pr-4 scroll-smooth hide-scrollbar relative"
+          >
+            <div className="h-[16px]"></div>
+
+            {timelineEvents.map((event, index) => (
+              <div
+                key={index}
+                className="timeline-node"
+              >
+                <TimelineItem
+                  event={event}
+                  index={index}
+                  isActive={activeTimelineIndex === index}
+                />
+              </div>
+            ))}
+
+            <div className="h-[200px]"></div>
+          </div>
+
+          {/* Square white map panel */}
+          <div className="hidden lg:flex h-full w-full items-center justify-center sticky top-0">
+            <div className="relative w-full max-w-[550px] aspect-square bg-white shadow-sm">
+              <FlatMap activeLocation={timelineEvents[activeTimelineIndex].location} />
+              <div className="absolute top-4 right-4 z-10 bg-[#fdfbf7]/90 dark:bg-[#1c1917]/90 px-4 py-2 rounded-lg border border-[#e7e5e4] dark:border-[#44403c] backdrop-blur-sm shadow-sm pointer-events-none">
+                <p className="text-sm font-mono font-bold text-[#fb923c]">{timelineEvents[activeTimelineIndex].location}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -251,7 +396,6 @@ export default function Home() {
           Skills & Certifications
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-4">
-          {/* Technical Skills Map */}
           <div className="flex flex-col gap-6">
             <h4 className="text-lg font-bold text-[#292524] dark:text-[#fafaf9] mb-2">Technical Capabilities</h4>
             {skillsData.map((skillGroup, index) => (
@@ -276,8 +420,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-
-          {/* Certifications List */}
           <div className="flex flex-col gap-4">
             <h4 className="text-lg font-bold text-[#292524] dark:text-[#fafaf9] mb-4">Professional Certifications</h4>
             <div className="space-y-4">
@@ -364,7 +506,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-
           <div
             className="flex flex-col md:flex-row gap-8"
             id="gdggt"
@@ -393,7 +534,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-
           <div
             className="flex flex-col md:flex-row gap-8"
             id="ogp"
