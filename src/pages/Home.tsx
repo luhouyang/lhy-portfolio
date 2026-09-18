@@ -321,7 +321,7 @@ export default function Home() {
       {/* 1. HERO REGION */}
       <section className="flex flex-col gap-6 max-w-3xl">
         <h1 className="text-4xl md:text-6xl font-bold text-[#292524] dark:text-[#fafaf9] tracking-tight">Lu Hou Yang</h1>
-        <h2 className="text-xl text-[#78716c] dark:text-[#a8a29e] font-mono">Software Developer | AI/ML & App Dev Specialist</h2>
+        <h2 className="text-xl text-[#78716c] dark:text-[#a8a29e] font-mono">Researcher | AI/ML & App Dev Specialist</h2>
         <p className="text-lg text-[#44403c] dark:text-[#d6d3d1] leading-relaxed">
           Currently pursuing a Bachelor's in Computer Science at Universiti Teknologi PETRONAS with a CGPA of 3.90. I build
           intelligent applications, train computer vision models, and lead technical workshops. When I'm not developing mobile
