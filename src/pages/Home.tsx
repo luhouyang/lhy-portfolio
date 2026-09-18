@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { Github, Linkedin, Mail, ArrowRight, MapPin, Calendar, Award, Terminal, Database, Code, Download } from "lucide-react";
+import { Github, Linkedin, Mail, MapPin, Calendar, Award, Terminal, Database, Code, Download } from "lucide-react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import { useState, useEffect, useRef } from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
