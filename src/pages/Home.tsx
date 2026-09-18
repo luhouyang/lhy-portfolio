@@ -8,9 +8,9 @@ import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps
 const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
 // --- Timeline distance scaling config ---
-const TIMELINE_PX_PER_MONTH = 8;   // px of vertical distance per month spent
-const TIMELINE_MIN_GAP_PX = 64;    // shortest allowed gap between nodes
-const TIMELINE_MAX_GAP_PX = 196;   // hard limit — no gap ever exceeds this
+const TIMELINE_PX_PER_MONTH = 8; // px of vertical distance per month spent
+const TIMELINE_MIN_GAP_PX = 64; // shortest allowed gap between nodes
+const TIMELINE_MAX_GAP_PX = 196; // hard limit — no gap ever exceeds this
 
 function timelineGapPx(months: number): number {
   return Math.max(TIMELINE_MIN_GAP_PX, Math.min(TIMELINE_MAX_GAP_PX, months * TIMELINE_PX_PER_MONTH));
@@ -235,8 +235,8 @@ function TimelineItem({ event, index, isActive }: { event: TimelineEvent; index:
             isActive
               ? "bg-[#c2410c] shadow-[0_0_14px_rgba(194,65,12,0.8)] ring-4 ring-[#c2410c]/20"
               : event.highlight
-              ? "bg-[#d6d3d1] dark:bg-[#57534e]"
-              : "bg-[#e7e5e4] dark:bg-[#44403c]"
+                ? "bg-[#d6d3d1] dark:bg-[#57534e]"
+                : "bg-[#e7e5e4] dark:bg-[#44403c]"
           }`}
         />
         {/* flex-grow makes the line stretch to fill the scaled gap */}
@@ -244,7 +244,10 @@ function TimelineItem({ event, index, isActive }: { event: TimelineEvent; index:
       </div>
 
       {/* The Content — bottom padding now scales with time spent (was pb-12) */}
-      <div className="max-w-xl" style={{ paddingBottom: isLast ? 24 : gapPx }}>
+      <div
+        className="max-w-xl"
+        style={{ paddingBottom: isLast ? 24 : gapPx }}
+      >
         <div className="flex flex-wrap items-center gap-3 mb-2 text-sm font-mono text-[#78716c] dark:text-[#a8a29e]">
           <span className="flex items-center gap-1">
             <Calendar size={14} /> {event.date}
@@ -339,12 +342,6 @@ export default function Home() {
           >
             <Download size={16} /> Download Resume
           </a>
-          <Link
-            to="/works"
-            className="px-6 py-2 bg-[#f5f5f4] dark:bg-[#292524] text-[#292524] dark:text-[#d6d3d1] border border-[#e7e5e4] dark:border-[#44403c] rounded-lg hover:border-[#c2410c] hover:text-[#c2410c] transition-colors font-medium flex items-center gap-2"
-          >
-            View Works <ArrowRight size={16} />
-          </Link>
         </div>
       </section>
 
